@@ -26,8 +26,8 @@ Current local shard set:
 
 These 8 shards cover the final output-class training/evaluation data plus the held-aside over-cap pool. Their committed metadata is:
 
-- `vision/shards_manifest.csv`
-- `vision/checksums.sha256`
+- `vision/shards_manifest.csv` (combined inventory for all shard sets, including older uploaded shards that may no longer exist locally)
+- `vision/checksums.sha256` (output/held-aside shard subset)
 
 The pretraining-only shard set is:
 
@@ -38,6 +38,8 @@ Its committed metadata is:
 - `vision/shards_manifest_pretraining.csv`
 - `vision/checksums_pretraining.sha256`
 - `vision/upload_manifest_pretraining.sha256` if uploading under the same `vision-shards/` object prefix as the output-class shards
+
+`vision/upload_manifest.sha256` is the combined upload-prefix checksum list for all 18 shards.
 
 ## Generate Shards
 
