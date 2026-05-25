@@ -42,7 +42,7 @@ BATCH_MANIFEST = VISION / "MANIFEST.csv"
 RAW_IMAGES = VISION / "images" / "raw"
 OUTPUT_CLASSES = VISION / "splits" / "output_classes.csv"
 HELD_ASIDE_POOL = VISION / "splits" / "held_aside_pool.csv"
-BALANCE_TABLE = VISION / "reports" / "class_balance_round2.csv"
+BALANCE_TABLE = VISION / "reports" / "class_balance.csv"
 PLANTNET_V2_RECORD = "https://zenodo.org/api/records/10419064"
 USDA_API = "https://plantsservices.sc.egov.usda.gov/api/"
 GBIF_API = "https://api.gbif.org/v1/"
@@ -1517,169 +1517,15 @@ def cmd_pull_gbif_inat(args: argparse.Namespace) -> None:
 def cmd_report(_: argparse.Namespace) -> None:
     images = read_csv(IMAGE_MANIFEST)
     batches = read_csv(BATCH_MANIFEST)
-    backbone = read_csv(VISION / "backbone" / "taxonomic_backbone.csv")
-    unmatched = read_csv(VISION / "backbone" / "unmatched_taxa.csv")
-    ed = read_csv(VISION / "edibility" / "edibility_skeleton.csv")
-    licenses = Counter(r.get("license", "unknown") for r in images)
-    species_counts = Counter(r.get("scientific_name", "") for r in images if r.get("scientific_name"))
-    target_rows = read_csv(VISION / "backbone" / "target_species.csv")
-    target_out = []
-    for row in target_rows:
-        count = species_counts.get(row.get("scientific_name", ""), 0)
-        status = "target_met" if count >= 100 else "floor_met" if count >= 30 else "insufficient"
-        row["image_count"] = count
-        row["coverage_status"] = status
-        target_out.append(row)
-    if target_out:
-        write_csv(
-            VISION / "backbone" / "target_species.csv",
-            list(target_out[0].keys()),
-            target_out,
-        )
-    split_counts = {}
-    for split in ["train", "val", "test", "calibration"]:
-        split_counts[split] = max(0, sum(1 for _ in (VISION / "splits" / f"{split}.csv").open("r", encoding="utf-8")) - 1) if (VISION / "splits" / f"{split}.csv").exists() else 0
-    unknown_license = sum(1 for r in images if normalize_license(r.get("license")) == "unknown")
-    accepted = accepted_licenses()
-    non_whitelisted_license = sum(1 for r in images if normalize_license(r.get("license")) not in accepted)
-    missing_files = sum(1 for r in images if r.get("path") and not (VISION / r["path"]).exists())
-    duplicate_hashes = sum(count - 1 for count in Counter(r.get("content_hash") for r in images if r.get("content_hash")).values() if count > 1)
-    unsafe_edibility = [r for r in ed if r.get("edibility") not in ("unknown", "") or r.get("consumption_guidance") != "do_not_eat" or r.get("needs_human_review") != "true"]
-    manifest_species = {canonical_species_name(name).lower() for name in species_counts if name}
-    edibility_species = {canonical_species_name(r.get("scientific_name", "")).lower() for r in ed if r.get("scientific_name")}
-    missing_edibility_species = sorted(manifest_species - edibility_species)
-    plantnet_archive = PLANTNET_ARCHIVE_PATH
-    plantnet_file = plantnet_record_file("images.zip")
-    plantnet_archive_size = int(plantnet_file["size"])
-    plantnet_partial_size = plantnet_archive.stat().st_size if plantnet_archive.exists() else 0
-    plantnet_parts_dir = plantnet_archive.with_suffix(plantnet_archive.suffix + ".parts")
-    plantnet_parts_bytes = 0
-    plantnet_parts_complete = 0
-    plantnet_parts_total = 0
-    if plantnet_parts_dir.exists():
-        plantnet_parts_bytes, plantnet_parts_complete, plantnet_parts_total = plantnet_parts_progress(
-            plantnet_parts_dir, plantnet_archive_size, 64 * 1024 * 1024
-        )
-    lines = [
-        "# Vision Coverage & Quality Report",
-        "",
-        f"Generated: {utc_now()}",
-        "",
-        "## Dataset Batches",
-        "",
-    ]
-    if batches:
-        lines += ["| Dataset | Source | Count | Status | License Terms |", "|---|---:|---:|---|---|"]
-        for b in batches:
-            lines.append(f"| {b['dataset']} | {b['source']} | {b['count']} | {b['status']} | {b['license_terms']} |")
-    else:
-        lines.append("No dataset batches manifested yet.")
-    lines += [
-        "",
-        "## License Breakdown",
-        "",
-        f"Retained images: {len(images)}",
-        f"Unknown-license retained images: {unknown_license}",
-        f"Non-whitelisted-license retained images: {non_whitelisted_license}",
-        f"Manifest rows with missing files: {missing_files}",
-        f"Duplicate content hashes: {duplicate_hashes}",
-        "",
-    ]
-    for lic, count in sorted(licenses.items()):
-        lines.append(f"- `{lic}`: {count}")
-    lines += [
-        "",
-        "## Splits",
-        "",
-    ]
-    for split, count in split_counts.items():
-        lines.append(f"- `{split}`: {count}")
-    lines += [
-        "",
-        "## Target Species Coverage",
-        "",
-        "| Scientific Name | Taxon ID | Images | Status | Match |",
-        "|---|---|---:|---|---|",
-    ]
-    for row in target_out:
-        requested = row.get("requested_scientific_name") or row.get("scientific_name", "")
-        accepted = row.get("scientific_name", "")
-        label = requested if requested == accepted else f"{requested} -> {accepted}"
-        lines.append(f"| {label} | {row.get('taxon_id','')} | {row['image_count']} | {row['coverage_status']} | {row.get('matched_status','')} |")
-    materialized_plantnet = sum(1 for r in images if r.get("dataset") == "plantnet300k-v2")
-    archive_verified = plantnet_archive.exists() and plantnet_partial_size == plantnet_archive_size
-    if archive_verified and materialized_plantnet:
-        plantnet_storage_line = (
-            f"PlantNet-300K-v2 archive is verified at `{plantnet_archive}` "
-            f"({plantnet_archive_size / (1024**3):.1f} GiB) and {materialized_plantnet} retained images have been materialized. "
-            f"Current free space is {shutil.disk_usage(ROOT).free / (1024**3):.1f} GiB."
-        )
-    else:
-        plantnet_storage_line = (
-            f"PlantNet-300K-v2 images require 41.8 GB for the compressed archive plus extraction space. "
-            f"The current volume has {shutil.disk_usage(ROOT).free / (1024**3):.1f} GiB free. "
-            f"A resumable partial archive exists at `{plantnet_archive}` with {plantnet_partial_size / (1024**2):.1f} MiB of "
-            f"{plantnet_archive_size / (1024**3):.1f} GiB downloaded. Segmented parts contain "
-            f"{plantnet_parts_bytes / (1024**2):.1f} MiB across {plantnet_parts_complete}/{plantnet_parts_total} complete parts. "
-            "Full image materialization has not started."
-        )
-    lines += [
-        "",
-        "## Backbone & Edibility Completeness",
-        "",
-        f"- Backbone records: {len(backbone)}",
-        f"- Unmatched taxa: {len(unmatched)}",
-        f"- Edibility skeleton records: {len(ed)}",
-        f"- Manifest species missing edibility skeleton rows: {len(missing_edibility_species)}",
-        f"- Unsafe/non-skeleton edibility records found: {len(unsafe_edibility)}",
-        "",
-        "## PlantNet Storage Status",
-        "",
-        plantnet_storage_line,
-    ]
-    report = VISION / "reports" / "coverage_quality_report.md"
-    report.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(report)
-
-
-def parse_baseline_target_counts() -> dict[str, int]:
-    report = VISION / "reports" / "coverage_quality_report.md"
-    if not report.exists():
-        return {}
-    counts: dict[str, int] = {}
-    in_table = False
-    for line in report.read_text(encoding="utf-8").splitlines():
-        if line.startswith("| Scientific Name |"):
-            in_table = True
-            continue
-        if in_table and not line.startswith("|"):
-            break
-        if not in_table or line.startswith("|---"):
-            continue
-        parts = [p.strip() for p in line.strip("|").split("|")]
-        if len(parts) < 3:
-            continue
-        label = parts[0]
-        name = label.split(" -> ")[-1].strip()
-        try:
-            counts[name] = int(parts[2])
-        except ValueError:
-            pass
-    return counts
-
-
-def cmd_report_round2(_: argparse.Namespace) -> None:
-    images = read_csv(IMAGE_MANIFEST)
     validation = read_json(VISION / "reports" / "validation_report.json", {})
     output_classes = read_csv(OUTPUT_CLASSES)
     balance_rows = read_csv(BALANCE_TABLE)
     held_rows = read_csv(HELD_ASIDE_POOL)
     pretraining_taxa = read_csv(VISION / "backbone" / "pretraining_only_taxa.csv")
-    descoped = read_csv(VISION / "config" / "descoped_targets_round2.csv")
+    descoped = read_csv(VISION / "config" / "descoped_targets.csv")
     unmatched = read_csv(VISION / "backbone" / "unmatched_taxa.csv")
     non_usda = read_csv(VISION / "backbone" / "non_usda_taxa.csv")
     ed = read_csv(VISION / "edibility" / "edibility_skeleton.csv")
-    baseline_counts = parse_baseline_target_counts()
     licenses = Counter(r.get("license", "unknown") for r in images)
     split_counts = {split: len(read_csv(VISION / "splits" / f"{split}.csv")) for split in SPLIT_NAMES}
     split_status_counts = Counter(r.get("split", "") for r in images)
@@ -1695,18 +1541,18 @@ def cmd_report_round2(_: argparse.Namespace) -> None:
         for r in images
         if r.get("split") == "pretraining_only" and r.get("scientific_name")
     }
-    round2_images = [r for r in images if r.get("dataset") == "gbif-inat-toxic-round2"]
+    toxic_expansion_images = [r for r in images if r.get("dataset") == "gbif-inat-toxic-round2"]
     unknown_license = sum(1 for r in images if normalize_license(r.get("license")) == "unknown")
     non_whitelisted = sum(1 for r in images if normalize_license(r.get("license")) not in accepted_licenses())
     lines = [
-        "# Vision Coverage & Quality Report - Round 2 Remediation",
+        "# Vision Coverage & Quality Report",
         "",
         f"Generated: {utc_now()}",
         "",
         "## Summary",
         "",
-        f"- Total retained images: {len(images)} (baseline 310676; delta {len(images) - 310676:+d})",
-        f"- Round-2 toxic-target GBIF/iNat additions: {len(round2_images)}",
+        f"- Total retained images: {len(images)}",
+        f"- Toxic-target GBIF/iNat expansion images: {len(toxic_expansion_images)}",
         f"- Output classes: {len(output_classes)}",
         f"- Output edibility skeleton coverage: {len(output_classes) - len(output_edibility_missing)}/{len(output_classes)}",
         f"- Held-aside over-cap images: {len(held_rows)}",
@@ -1715,6 +1561,18 @@ def cmd_report_round2(_: argparse.Namespace) -> None:
         f"- Unknown-license retained images: {unknown_license}",
         f"- Non-whitelisted-license retained images: {non_whitelisted}",
         f"- Validation passed: {validation.get('passed')}",
+        "",
+        "## Dataset Batches",
+        "",
+    ]
+    if batches:
+        lines += ["| Dataset | Source | Count | Status | License Terms |", "|---|---|---:|---|---|"]
+        for b in batches:
+            dataset_label = "gbif-inat-toxic-expansion" if b["dataset"] == "gbif-inat-toxic-round2" else b["dataset"]
+            lines.append(f"| {dataset_label} | {b['source']} | {b['count']} | {b['status']} | {b['license_terms']} |")
+    else:
+        lines.append("No dataset batches manifested yet.")
+    lines += [
         "",
         "## Disk & Integrity",
         "",
@@ -1766,13 +1624,13 @@ def cmd_report_round2(_: argparse.Namespace) -> None:
         "",
         "## Balance Table",
         "",
-        "| Scientific Name | Baseline | Post Pull | Selected | Held Aside | Toxic Target | Under 1:3 vs Median |",
-        "|---|---:|---:|---:|---:|---|---|",
+        "| Scientific Name | Images Before Cap | Selected | Held Aside | Toxic Target | Under 1:3 vs Median |",
+        "|---|---:|---:|---:|---|---|",
     ]
     for row in sorted(balance_rows, key=lambda r: r["scientific_name"]):
         name = row["scientific_name"]
         lines.append(
-            f"| {name} | {baseline_counts.get(name, 0)} | {row['pre_cap_count']} | {row['selected_count']} | "
+            f"| {name} | {row['pre_cap_count']} | {row['selected_count']} | "
             f"{row['held_aside_count']} | {row['is_toxic_remediation_target']} | {row['below_1_to_3_vs_median']} |"
         )
     lines += [
@@ -1794,7 +1652,7 @@ def cmd_report_round2(_: argparse.Namespace) -> None:
         "- Fungi refusal contract is documented in `vision/fungi_refusal_contract.md`.",
         "- Edibility remains skeleton-only: every record is `unknown`, `do_not_eat`, and `needs_human_review=true`.",
     ]
-    out = VISION / "reports" / "coverage_quality_report_round2.md"
+    out = VISION / "reports" / "coverage_quality_report.md"
     out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(out)
 
@@ -1957,8 +1815,6 @@ def build_parser() -> argparse.ArgumentParser:
     s.set_defaults(func=cmd_pull_gbif_inat)
     s = sub.add_parser("report")
     s.set_defaults(func=cmd_report)
-    s = sub.add_parser("report-round2")
-    s.set_defaults(func=cmd_report_round2)
     s = sub.add_parser("validate")
     s.set_defaults(func=cmd_validate)
     return p

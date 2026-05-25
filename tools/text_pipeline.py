@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
-"""Build and remediate the Pocket Crockett Pipeline A text corpus.
+"""Build the Pocket Crockett Pipeline A text corpus.
 
-This replaces the earlier one-off scripts under ``scripts/`` with a stable
-CLI and shared helpers for download, cleaning, chunking, and reporting.
+There is one standard path now:
 
-Typical use:
+    python3 tools/text_pipeline.py
 
-    python3 tools/text_pipeline.py baseline
-    python3 tools/text_pipeline.py remediate-round2
+The script reads ``text/source_plan.csv`` as the canonical source list, then
+downloads missing raw files, cleans them, writes RAG chunks, refreshes
+``text/MANIFEST.csv``, and emits one holistic coverage/provenance report.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import re
 import sys
@@ -31,17 +30,13 @@ CHUNK_DIR = TEXT_DIR / "rag_chunks"
 REPORT_DIR = TEXT_DIR / "reports"
 
 SOURCE_PLAN = TEXT_DIR / "source_plan.csv"
-ROUND2_SOURCE_PLAN = TEXT_DIR / "source_plan_round2.csv"
 MANIFEST = TEXT_DIR / "MANIFEST.csv"
 COVERAGE_LOG = TEXT_DIR / "coverage_log.csv"
 SKIPPED = TEXT_DIR / "skipped_sources.csv"
 
-BASELINE_REPORT = REPORT_DIR / "coverage_provenance_report.md"
-ROUND2_REPORT = REPORT_DIR / "coverage_provenance_report_round2.md"
-SKEW_REPORT = REPORT_DIR / "corpus_skew_round2.csv"
-TRUST_AUDIT = REPORT_DIR / "trust_tier_audit_round2.csv"
-OCR_AUDIT = REPORT_DIR / "ocr_spotcheck_round2.csv"
-FORAGING_REVIEW = REPORT_DIR / "foraging_claims_needing_human_review_round2.jsonl"
+COVERAGE_REPORT = REPORT_DIR / "coverage_provenance_report.md"
+SKEW_REPORT = REPORT_DIR / "corpus_skew.csv"
+FORAGING_REVIEW = REPORT_DIR / "foraging_claims_needing_human_review.jsonl"
 
 MANIFEST_FIELDS = [
     "source_id",
@@ -81,74 +76,6 @@ TOPICS = [
     "pre_industrial_trades",
 ]
 
-ROUND2_SOURCES = [
-    {
-        "source_id": "us_military_fm_4_25_11_first_aid",
-        "source": "Departments of the Army, Navy, Air Force, and Marine Corps",
-        "title": "FM 4-25.11 (FM 21-11) First Aid (Change 1)",
-        "license": "public-domain-usgov",
-        "trust_tier": "high",
-        "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/FM_4-25.11_%28FM_21-11%29_First_Aid_%28Change_1%29.pdf",
-        "raw_filename": "us_military_fm_4_25_11_first_aid.pdf",
-        "clean_filename": "us_military_fm_4_25_11_first_aid.txt",
-        "topics": "first_aid;low_resource_medicine;wound_care",
-        "source_type": "pdf",
-        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:FM_4-25.11_(FM_21-11)_First_Aid_(Change_1).pdf",
-        "license_evidence": "Wikimedia Commons identifies this as a work of U.S. Army/Navy/Air Force/Marine Corps personnel, public domain as U.S. federal government work; document states approved for public release.",
-        "notes": "Dedicated high-trust first-aid and low-resource emergency care source added in remediation round 2.",
-        "date_acquired": "2026-05-25",
-    },
-    {
-        "source_id": "usda_food_plants_north_american_indians",
-        "source": "USDA Bureau of Chemistry and Soils",
-        "title": "Food Plants of the North American Indians",
-        "license": "public-domain-usgov",
-        "trust_tier": "low",
-        "url": "https://archive.org/download/foodplantsofnort237yano/foodplantsofnort237yano_djvu.txt",
-        "raw_filename": "usda_food_plants_north_american_indians_ocr.txt",
-        "clean_filename": "usda_food_plants_north_american_indians.txt",
-        "topics": "foraging;ethnobotany;edible_plants",
-        "source_type": "text",
-        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Food_plants_of_the_North_American_Indians_(IA_foodplantsofnort237yano).pdf",
-        "license_evidence": "Wikimedia Commons identifies this USDA Miscellaneous Publication as public domain under 17 USC 105.",
-        "notes": "Historical USDA ethnobotanical compilation. All edibility/safety claims are flagged needs_human_review before use in the vision edibility table.",
-        "date_acquired": "2026-05-25",
-    },
-    {
-        "source_id": "appropedia_rainwater_harvesting_wayback",
-        "source": "Appropedia via Internet Archive Wayback Machine",
-        "title": "Rainwater Harvesting",
-        "license": "CC-BY-SA-3.0",
-        "trust_tier": "low",
-        "url": "https://web.archive.org/web/20240225191326/https://www.appropedia.org/Rainwater_harvesting",
-        "raw_filename": "appropedia_rainwater_harvesting_wayback.html",
-        "clean_filename": "appropedia_rainwater_harvesting_wayback.txt",
-        "topics": "water;rainwater_harvesting",
-        "source_type": "html",
-        "license_evidence_url": "https://web.archive.org/web/20240225191326/https://www.appropedia.org/Rainwater_harvesting",
-        "license_evidence": "Archived page metadata includes license content=\"CC-BY-SA-3.0\".",
-        "notes": "Recovered from Wayback after live Appropedia acquisition was blocked by Cloudflare in round 1.",
-        "date_acquired": "2026-05-25",
-    },
-    {
-        "source_id": "epa_emergency_disinfection_drinking_water",
-        "source": "U.S. Environmental Protection Agency",
-        "title": "Emergency Disinfection of Drinking Water",
-        "license": "public-domain-usgov",
-        "trust_tier": "high",
-        "url": "https://www.epa.gov/ground-water-and-drinking-water/emergency-disinfection-drinking-water",
-        "raw_filename": "epa_emergency_disinfection_drinking_water.html",
-        "clean_filename": "epa_emergency_disinfection_drinking_water.txt",
-        "topics": "water;purification;emergency_preparedness",
-        "source_type": "html",
-        "license_evidence_url": "https://www.epa.gov/ground-water-and-drinking-water/emergency-disinfection-drinking-water",
-        "license_evidence": "Official .gov EPA page; U.S. federal government work.",
-        "notes": "Dedicated high-trust water disinfection source added in remediation round 2.",
-        "date_acquired": "2026-05-25",
-    },
-]
-ROUND2_SOURCE_IDS = {source["source_id"] for source in ROUND2_SOURCES}
-
 CLAIM_PATTERNS = re.compile(
     r"\b(edible|eaten|eat|food|foods|cooked|raw|boiled|dried|roasted|poison|poisonous|toxic|toxicity|medicinal|medicine|poultice|tea|root|berries|leaves|seeds|fruit)\b",
     re.I,
@@ -173,18 +100,10 @@ def write_csv(path: Path, rows: list[dict], fields: list[str]) -> None:
             writer.writerow({field: row.get(field, "") for field in fields})
 
 
-def sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        for block in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(block)
-    return h.hexdigest()
-
-
 def download(url: str, dest: Path) -> None:
     if dest.exists() and dest.stat().st_size > 0:
         return
-    request = urllib.request.Request(url, headers={"User-Agent": "Pocket-Crockett-corpus-builder/0.3"})
+    request = urllib.request.Request(url, headers={"User-Agent": "Pocket-Crockett-corpus-builder/1.0"})
     with urllib.request.urlopen(request, timeout=60) as response:
         data = response.read()
     if len(data) < 1024:
@@ -431,71 +350,29 @@ def summarize_coverage(manifest_rows: list[dict[str, str]]) -> list[dict[str, st
     return rows
 
 
-def write_baseline_report(manifest_rows: list[dict[str, str]], coverage_rows: list[dict]) -> None:
-    acquired = [r for r in manifest_rows if r["status"] == "acquired"]
-    skipped = read_csv(SKIPPED) if SKIPPED.exists() else []
-    trust_counts = Counter(r["trust_tier"] for r in acquired)
-    ocr_counts = Counter(r["ocr_quality"] for r in acquired)
-    total_chunks = sum(int(r.get("chunk_count", 0)) for r in acquired)
-    gaps = [r for r in coverage_rows if r["status"].startswith("gap")]
-
-    acquired_lines = "\n".join(
-        f"- `{r['source_id']}` - {r['title']} ({r['license']}, {r['trust_tier']}, {r['ocr_quality']}, {r.get('chunk_count', 0)} chunks)"
-        for r in acquired
-    )
-    skipped_lines = "\n".join(
-        f"- {r['source_category']} / {r['title']}: {r['status']} - {r['reason']}" for r in skipped
-    )
-    coverage_lines = "\n".join(
-        f"- {r['topic']}: {r['high_sources']} high, {r['low_sources']} low - {r['status']}" for r in coverage_rows
-    )
-    license_lines = "\n".join(
-        f"- `{r['source_id']}`: {r['license']} evidence: {r['license_evidence_url']}" for r in acquired
-    )
-    gap_text = "None" if not gaps else "\n".join(f"- {r['topic']}" for r in gaps)
-
-    report = f"""# Pocket Crockett Pipeline A Coverage & Provenance Report
-
-Generated: 2026-05-25
-
-## Summary
-
-- Acquired sources: {len(acquired)}
-- Skipped source categories/items: {len(skipped)}
-- Total RAG chunks: {total_chunks}
-- Trust tiers: {dict(trust_counts)}
-- OCR/text quality: {dict(ocr_counts)}
-- Topics with zero high-trust coverage: {len(gaps)}
-
-## Acquired Sources
-
-{acquired_lines}
-
-## Skipped Sources
-
-{skipped_lines}
-
-## Topic Coverage
-
-{coverage_lines}
-
-## Zero High-Trust Coverage Gaps
-
-{gap_text}
-
-## License Evidence
-
-{license_lines}
-
-## Notes
-
-- Hesperian was not imported because its policy requires written permission for digital use.
-- FAO was not imported in this pass because no item-specific approved license was selected.
-- Survivor Library was treated as an index; initial corpus items were acquired from primary or item-level public-domain hosts instead.
-- No source with unknown or unverifiable license was included in the manifest as acquired.
-- Nothing flagged `unusable` was included in RAG chunks.
-"""
-    BASELINE_REPORT.write_text(report, encoding="utf-8")
+def fm_21_76_ocr_check(manifest_rows: list[dict[str, str]]) -> dict[str, str | int]:
+    row = next(r for r in manifest_rows if r["source_id"] == "us_army_fm_21_76")
+    text = (ROOT / row["clean_path"]).read_text(encoding="utf-8", errors="replace")
+    sample_checks = [
+        ("page markers", text.count("[page ") >= 200),
+        ("survival heading readable", "SURVIVAL" in text[:10000].upper()),
+        ("plant section readable", "edible" in text.lower() and "poisonous" in text.lower()),
+        ("low replacement character rate", text.count("\ufffd") == 0),
+    ]
+    word_count = len(text.split())
+    long_garble_tokens = len(re.findall(r"\b[A-Za-z]{35,}\b", text))
+    quality = "clean" if word_count > 50000 and long_garble_tokens < 250 and all(v for _, v in sample_checks) else "noisy"
+    row["ocr_quality"] = quality
+    return {
+        "source_id": row["source_id"],
+        "ocr_quality": quality,
+        "word_count": word_count,
+        "long_garble_tokens": long_garble_tokens,
+        "checks": "; ".join(f"{name}={value}" for name, value in sample_checks),
+        "notes": "Spot-check found readable headings and plant/first-aid content with no replacement characters."
+        if quality == "clean"
+        else "Spot-check found enough artifacts to classify as noisy.",
+    }
 
 
 def write_foraging_review() -> int:
@@ -528,75 +405,6 @@ def write_foraging_review() -> int:
     return len(records)
 
 
-def update_wikibooks_tier(manifest_rows: list[dict[str, str]]) -> list[dict[str, str]]:
-    audit_rows = []
-    for row in manifest_rows:
-        if row["source_id"] == "wikibooks_gardening" and row["trust_tier"] != "low":
-            old = row["trust_tier"]
-            row["trust_tier"] = "low"
-            row["notes"] = (
-                row.get("notes", "")
-                + " Round 2 trust-tier audit: reclassified from high to low because this is a community-authored youth-honors page, not a government/medical/extension authority."
-            ).strip()
-            audit_rows.append(
-                {
-                    "source_id": row["source_id"],
-                    "old_trust_tier": old,
-                    "new_trust_tier": "low",
-                    "reason": "Community-authored Wikibooks page should not share the same trust tier as USDA/Army/FEMA/EPA sources.",
-                }
-            )
-            chunk_path = ROOT / row["rag_chunks_path"]
-            updated = []
-            for line in chunk_path.read_text(encoding="utf-8").splitlines():
-                chunk = json.loads(line)
-                chunk["trust_tier"] = "low"
-                updated.append(json.dumps(chunk, ensure_ascii=False))
-            chunk_path.write_text("\n".join(updated) + "\n", encoding="utf-8")
-    if not audit_rows:
-        audit_rows.append(
-            {
-                "source_id": "wikibooks_gardening",
-                "old_trust_tier": "high",
-                "new_trust_tier": "low",
-                "reason": "Community-authored Wikibooks page should not share the same trust tier as USDA/Army/FEMA/EPA sources. Reclassification already applied.",
-            }
-        )
-    write_csv(TRUST_AUDIT, audit_rows, ["source_id", "old_trust_tier", "new_trust_tier", "reason"])
-    return audit_rows
-
-
-def fm_21_76_ocr_audit(manifest_rows: list[dict[str, str]]) -> list[dict[str, str | int]]:
-    row = next(r for r in manifest_rows if r["source_id"] == "us_army_fm_21_76")
-    text = (ROOT / row["clean_path"]).read_text(encoding="utf-8", errors="replace")
-    sample_checks = [
-        ("page markers", text.count("[page ") >= 200),
-        ("survival heading readable", "SURVIVAL" in text[:10000].upper()),
-        ("plant section readable", "edible" in text.lower() and "poisonous" in text.lower()),
-        ("low replacement character rate", text.count("\ufffd") == 0),
-    ]
-    word_count = len(text.split())
-    long_garble_tokens = len(re.findall(r"\b[A-Za-z]{35,}\b", text))
-    quality = "clean" if word_count > 50000 and long_garble_tokens < 250 and all(v for _, v in sample_checks) else "noisy"
-    old = row["ocr_quality"]
-    row["ocr_quality"] = quality
-    audit = [
-        {
-            "source_id": row["source_id"],
-            "old_ocr_quality": old,
-            "new_ocr_quality": quality,
-            "word_count": word_count,
-            "long_garble_tokens": long_garble_tokens,
-            "checks": "; ".join(f"{name}={value}" for name, value in sample_checks),
-            "notes": "Spot-check found readable headings and plant/first-aid content with no replacement characters; retained clean flag."
-            if quality == "clean"
-            else "Spot-check found enough artifacts to reclassify as noisy.",
-        }
-    ]
-    write_csv(OCR_AUDIT, audit, ["source_id", "old_ocr_quality", "new_ocr_quality", "word_count", "long_garble_tokens", "checks", "notes"])
-    return audit
-
-
 def write_skew_report(manifest_rows: list[dict[str, str]]) -> list[dict[str, str | int]]:
     counts = Counter()
     for row in manifest_rows:
@@ -614,63 +422,65 @@ def write_skew_report(manifest_rows: list[dict[str, str]]) -> list[dict[str, str
     return rows
 
 
-def write_round2_report(
+def write_report(
     manifest_rows: list[dict[str, str]],
-    added_rows: list[dict[str, str]],
     coverage_rows: list[dict],
     skew_rows: list[dict],
-    trust_audit_rows: list[dict],
-    ocr_audit_rows: list[dict],
+    ocr_check: dict,
     claim_count: int,
 ) -> None:
-    baseline_sources = 13
-    total_chunks = sum(int(r.get("chunk_count") or 0) for r in manifest_rows)
-    added_lines = "\n".join(
-        f"- `{r['source_id']}` - {r['title']} ({r['license']}, {r['trust_tier']}, {r['ocr_quality']}, {r['chunk_count']} chunks)"
-        for r in added_rows
+    acquired = [r for r in manifest_rows if r["status"] == "acquired"]
+    skipped = read_csv(SKIPPED) if SKIPPED.exists() else []
+    trust_counts = Counter(r["trust_tier"] for r in acquired)
+    ocr_counts = Counter(r["ocr_quality"] for r in acquired)
+    total_chunks = sum(int(r.get("chunk_count", 0)) for r in acquired)
+    gaps = [r for r in coverage_rows if r["status"].startswith("gap")]
+
+    acquired_lines = "\n".join(
+        f"- `{r['source_id']}` - {r['title']} ({r['license']}, {r['trust_tier']}, {r['ocr_quality']}, {r.get('chunk_count', 0)} chunks)"
+        for r in acquired
     )
-    trust_lines = "\n".join(
-        f"- `{r['source_id']}`: {r['old_trust_tier']} -> {r['new_trust_tier']} - {r['reason']}" for r in trust_audit_rows
-    )
-    ocr_lines = "\n".join(
-        f"- `{r['source_id']}`: {r['old_ocr_quality']} -> {r['new_ocr_quality']}; {r['notes']}" for r in ocr_audit_rows
+    skipped_lines = "\n".join(
+        f"- {r['source_category']} / {r['title']}: {r['status']} - {r['reason']}" for r in skipped
     )
     coverage_lines = "\n".join(
         f"- {r['topic']}: {r['high_sources']} high, {r['low_sources']} low - {r['status']}" for r in coverage_rows
     )
     skew_lines = "\n".join(f"- {r['trust_tier']}: {r['chunk_count']} chunks ({r['percentage']}%)" for r in skew_rows)
     license_lines = "\n".join(
-        f"- `{r['source_id']}`: {r['license']} evidence: {r['license_evidence_url']}" for r in added_rows
+        f"- `{r['source_id']}`: {r['license']} evidence: {r['license_evidence_url']}" for r in acquired
     )
+    gap_text = "None" if not gaps else "\n".join(f"- {r['topic']}" for r in gaps)
 
-    report = f"""# Pocket Crockett Pipeline A Coverage & Provenance Report - Round 2 Remediation
+    report = f"""# Pocket Crockett Pipeline A Coverage & Provenance Report
 
 Generated: 2026-05-25
 
-## Baseline Diff
+## Summary
 
-- Baseline report date: 2026-05-25
-- Baseline acquired sources: {baseline_sources}
-- Round 2 sources added: {len(added_rows)}
-- Total acquired sources after round 2: {len([r for r in manifest_rows if r['status'] == 'acquired'])}
-- Total RAG chunks after round 2: {total_chunks}
+- Acquired sources: {len(acquired)}
+- Skipped source categories/items: {len(skipped)}
+- Total RAG chunks: {total_chunks}
+- Trust tiers: {dict(trust_counts)}
+- OCR/text quality: {dict(ocr_counts)}
+- Topics with zero high-trust coverage: {len(gaps)}
 - Foraging claim records flagged `needs_human_review`: {claim_count}
 
-## Sources Added
+## Acquired Sources
 
-{added_lines}
+{acquired_lines}
 
-## Trust-Tier Audit
+## Skipped Sources
 
-{trust_lines}
+{skipped_lines}
 
-## FM 21-76 OCR Spot-Check
-
-{ocr_lines}
-
-## Topic Coverage After Round 2
+## Topic Coverage
 
 {coverage_lines}
+
+## Zero High-Trust Coverage Gaps
+
+{gap_text}
 
 ## Chunk Volume By Trust Tier
 
@@ -678,102 +488,63 @@ Generated: 2026-05-25
 
 Recommendation: keep low-trust historical/community material available for recall, but down-weight it during retrieval and cap per-source contribution for oversized low-trust books. In particular, cap or dampen `gutenberg_leather_manufacture`, `gutenberg_manual_gardening`, and the historical USDA foraging source so they cannot dominate answers over modern government and medical material.
 
+## OCR Spot-Check
+
+- `{ocr_check['source_id']}`: {ocr_check['ocr_quality']}; {ocr_check['notes']}
+- Word count: {ocr_check['word_count']}; long garble tokens: {ocr_check['long_garble_tokens']}; checks: {ocr_check['checks']}
+
 ## Foraging Safety Coordination
 
-- New foraging source: `usda_food_plants_north_american_indians`.
-- Every chunk from this source carries `edibility_claim_review: needs_human_review`.
+- The historical USDA ethnobotany source carries `edibility_claim_review: needs_human_review` on every generated chunk.
 - Extracted claim-level review records are in `{FORAGING_REVIEW.relative_to(ROOT)}`.
 - These claims must not be treated as final edibility authority. They require reconciliation with the vision pipeline's species edibility table.
 
-## License Evidence For New Sources
+## License Evidence
 
 {license_lines}
 
-## Recommended Human Follow-Ups
+## Notes
 
-- Pursue written digital-use permission from Hesperian if the project still wants `Where There Is No Doctor` or related Hesperian texts.
-- Review all round-2 foraging claims before any species-level edibility table import.
-- Add retrieval-time weighting/capping for low-trust and oversized sources.
-- Later pass: address the deferred high-trust gap for `pre_industrial_trades`.
+- Hesperian was not imported because its policy requires written permission for digital use.
+- FAO was not imported because no item-specific approved license was selected.
+- Survivor Library was treated as an index; corpus items were acquired from primary or item-level public-domain hosts instead.
+- No source with unknown or unverifiable license was included in the manifest as acquired.
+- Nothing flagged `unusable` was included in RAG chunks.
+- Wikibooks gardening is intentionally low trust because it is community-authored rather than government, medical, or extension material.
 """
-    ROUND2_REPORT.write_text(report, encoding="utf-8")
+    COVERAGE_REPORT.write_text(report, encoding="utf-8")
 
 
-def run_baseline(_args: argparse.Namespace) -> int:
+def build(_args: argparse.Namespace) -> int:
     ensure_dirs()
     plan_rows = read_csv(SOURCE_PLAN)
     manifest_rows = []
     for row in plan_rows:
         raw_path = RAW_DIR / row["raw_filename"]
-        print(f"Downloading {row['source_id']}...", file=sys.stderr)
+        print(f"Processing {row['source_id']}...", file=sys.stderr)
         download(row["url"], raw_path)
         clean_path, quality = clean_source(row)
         chunk_path, chunk_count = chunk_text(row, clean_path, quality)
         manifest_rows.append(manifest_row_from_source(row, clean_path, chunk_path, quality, chunk_count))
 
-    write_csv(MANIFEST, manifest_rows, MANIFEST_FIELDS)
-    coverage_rows = summarize_coverage(manifest_rows)
-    write_baseline_report(manifest_rows, coverage_rows)
-    print(f"Wrote {MANIFEST}", file=sys.stderr)
-    print(f"Wrote {COVERAGE_LOG}", file=sys.stderr)
-    print(f"Wrote {BASELINE_REPORT}", file=sys.stderr)
-    return 0
-
-
-def run_remediate_round2(_args: argparse.Namespace) -> int:
-    ensure_dirs()
-    manifest_rows = read_csv(MANIFEST)
-    existing_ids = {row["source_id"] for row in manifest_rows}
-    existing_hashes = {
-        sha256(ROOT / row["raw_path"])
-        for row in manifest_rows
-        if row.get("raw_path") and (ROOT / row["raw_path"]).exists()
-    }
-
-    write_csv(ROUND2_SOURCE_PLAN, ROUND2_SOURCES, list(ROUND2_SOURCES[0].keys()))
-
-    added_rows = []
-    for source in ROUND2_SOURCES:
-        if source["source_id"] in existing_ids:
-            continue
-        raw_path = RAW_DIR / source["raw_filename"]
-        download(source["url"], raw_path)
-        raw_hash = sha256(raw_path)
-        if raw_hash in existing_hashes:
-            raw_path.unlink(missing_ok=True)
-            continue
-        existing_hashes.add(raw_hash)
-        clean_path, quality = clean_source(source)
-        chunk_path, chunk_count = chunk_text(source, clean_path, quality)
-        manifest_row = manifest_row_from_source(source, clean_path, chunk_path, quality, chunk_count)
-        manifest_rows.append(manifest_row)
-        added_rows.append(manifest_row)
-
-    trust_audit_rows = update_wikibooks_tier(manifest_rows)
-    ocr_audit_rows = fm_21_76_ocr_audit(manifest_rows)
+    ocr_check = fm_21_76_ocr_check(manifest_rows)
     claim_count = write_foraging_review()
     write_csv(MANIFEST, manifest_rows, MANIFEST_FIELDS)
     coverage_rows = summarize_coverage(manifest_rows)
     skew_rows = write_skew_report(manifest_rows)
-    round2_rows = [row for row in manifest_rows if row["source_id"] in ROUND2_SOURCE_IDS]
-    write_round2_report(manifest_rows, round2_rows, coverage_rows, skew_rows, trust_audit_rows, ocr_audit_rows, claim_count)
+    write_report(manifest_rows, coverage_rows, skew_rows, ocr_check, claim_count)
 
-    print(f"Added {len(added_rows)} sources")
-    print(f"Flagged {claim_count} foraging claim records")
-    print(f"Wrote {ROUND2_REPORT}")
+    print(f"Wrote {MANIFEST}", file=sys.stderr)
+    print(f"Wrote {COVERAGE_LOG}", file=sys.stderr)
+    print(f"Wrote {SKEW_REPORT}", file=sys.stderr)
+    print(f"Wrote {FORAGING_REVIEW}", file=sys.stderr)
+    print(f"Wrote {COVERAGE_REPORT}", file=sys.stderr)
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Build and remediate the Pipeline A text corpus.")
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
-    baseline = subparsers.add_parser("baseline", help="Rebuild Pipeline A from text/source_plan.csv.")
-    baseline.set_defaults(func=run_baseline)
-
-    round2 = subparsers.add_parser("remediate-round2", help="Apply the round-2 text-corpus remediation pass.")
-    round2.set_defaults(func=run_remediate_round2)
-
+    parser = argparse.ArgumentParser(description="Build the Pipeline A text corpus from text/source_plan.csv.")
+    parser.set_defaults(func=build)
     return parser
 
 

@@ -124,10 +124,10 @@ Common data-tool entry points:
 
 ```bash
 # Pipeline A text corpus.
-python3 tools/text_pipeline.py baseline
-python3 tools/text_pipeline.py remediate-round2
+python3 tools/text_pipeline.py
 
 # Pipeline B vision shards/R2.
+python3 tools/vision_pipeline.py report
 python3 tools/shard_vision_dataset.py --max-shard-gib 4
 python3 tools/upload_to_r2.py --dry-run
 ```
