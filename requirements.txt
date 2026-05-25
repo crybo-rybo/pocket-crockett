@@ -1,0 +1,5 @@
+# Runtime dependencies for the Pocket Crockett tooling.
+# Install with:  pip install -r requirements.txt
+
+# tools/upload_to_r2.py — S3-compatible client for Cloudflare R2.
+boto3>=1.34

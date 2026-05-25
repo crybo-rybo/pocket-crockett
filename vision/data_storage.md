@@ -59,3 +59,68 @@ shasum -a 256 -c checksums.sha256
 ```
 
 The bucket/storage location is intentionally not recorded with any secret credentials. Keep any image bucket private because the dataset includes CC-BY-SA and CC-BY-NC-family images.
+
+## Upload to Cloudflare R2
+
+Image bytes are kept off-machine in a private Cloudflare R2 bucket. R2 was chosen because it speaks the S3 API and charges zero egress, which keeps the training-day pull from RunPod cheap.
+
+### One-time setup
+
+1. Create a private R2 bucket (e.g. `pocket-crockett-vision`).
+2. In the Cloudflare dashboard, generate an R2 API token scoped to that bucket with Read+Write. Note the Access Key ID, Secret Access Key, and your account ID.
+3. Provide credentials to `tools/upload_to_r2.py`. Either export in your shell:
+
+   ```bash
+   export R2_ACCOUNT_ID=...
+   export R2_ACCESS_KEY_ID=...
+   export R2_SECRET_ACCESS_KEY=...
+   export R2_BUCKET=pocket-crockett-vision
+   ```
+
+   …or copy the template and fill it in (this is the easier path):
+
+   ```bash
+   cp .env.example .env
+   # edit .env
+   ```
+
+   `.env` is gitignored. Already-exported shell vars take precedence, so you can override any single variable per-shell without touching the file.
+
+4. Install Python dependencies (just `boto3` today):
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Upload
+
+The uploader reads `vision/shards_manifest.csv` as the source of truth for shard names and expected SHA-256s, sets the SHA-256 at the storage layer, and HEADs the object after upload to confirm R2 recorded the same hash. It is idempotent — already-present shards with matching SHA-256s are skipped, so an interrupted run can simply be re-invoked.
+
+```bash
+# Inspect what would happen.
+python3 tools/upload_to_r2.py --dry-run
+
+# Upload one small shard first to confirm the credentials and verification path.
+python3 tools/upload_to_r2.py --only val-000.tar
+
+# Full set.
+python3 tools/upload_to_r2.py
+```
+
+Outputs:
+
+- `vision/upload_manifest.sha256` — durable record of `sha256  key` lines for every successfully uploaded or already-present shard. Committable.
+- `vision/upload_manifest.json` — transient per-run details (status, sizes, mismatches). Gitignored.
+
+After a successful full upload, the local `vision/shards/` directory can be deleted to reclaim ~22 GB. The bucket is the durable home; shards can be repacked from images locally any time via `tools/shard_vision_dataset.py`.
+
+## Training-day pull (RunPod)
+
+On a RunPod pod attached to a Network Volume (used as scratch), pull shards from R2 directly:
+
+```bash
+rclone config  # one-time: add an S3-compatible remote pointing at R2
+rclone copy r2:pocket-crockett-vision/vision-shards/ /workspace/shards --progress --checksum
+```
+
+The `--checksum` flag tells rclone to verify against the SHA-256 R2 has on file. After the campaign, delete the Network Volume; the bucket remains the durable copy (idle storage ~$0.25/mo).

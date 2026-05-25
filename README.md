@@ -102,6 +102,26 @@ Gather labeled North American plant imagery → fine-tune a bio-pretrained class
 - **Surface deadly look-alikes loudly** — water hemlock, poison hemlock, death camas, deadly *Amanita* — regardless of score.
 - **Cite sources** in chat answers; tag low-trust (old herbal) vs. high-trust (modern gov/medical) material.
 
+## Local setup
+
+The Python tooling in `scripts/` and `tools/` runs in a project-local virtualenv so heavy ML deps (boto3 now; torch / transformers / chromadb later) don't pile into your global Python and start version-fighting each other.
+
+```bash
+# One time, from the repo root.
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+
+# Each shell where you'll run the scripts.
+source .venv/bin/activate
+```
+
+Once activated, plain `python3 tools/upload_to_r2.py` etc. picks up the right interpreter. `deactivate` to exit the venv. The `.venv/` directory is gitignored.
+
+Credentials (`R2_*`) come from either your shell or a gitignored `.env` file at the repo root — see `.env.example` for the template.
+
+---
+
 ## Data storage and licensing
 
 The vision image bytes are not committed to git. They are packaged as tar shards under `vision/shards/` and tracked by committed manifests plus `vision/checksums.sha256`; see `vision/data_storage.md`.
