@@ -104,7 +104,7 @@ Gather labeled North American plant imagery → fine-tune a bio-pretrained class
 
 ## Local setup
 
-The Python tooling in `scripts/` and `tools/` runs in a project-local virtualenv so heavy ML deps (boto3 now; torch / transformers / chromadb later) don't pile into your global Python and start version-fighting each other.
+The Python tooling in `tools/` runs in a project-local virtualenv so project deps (boto3, PDF/text parsers now; torch / transformers / chromadb later) don't pile into your global Python and start version-fighting each other.
 
 ```bash
 # One time, from the repo root.
@@ -119,6 +119,18 @@ source .venv/bin/activate
 Once activated, plain `python3 tools/upload_to_r2.py` etc. picks up the right interpreter. `deactivate` to exit the venv. The `.venv/` directory is gitignored.
 
 Credentials (`R2_*`) come from either your shell or a gitignored `.env` file at the repo root — see `.env.example` for the template.
+
+Common data-tool entry points:
+
+```bash
+# Pipeline A text corpus.
+python3 tools/text_pipeline.py baseline
+python3 tools/text_pipeline.py remediate-round2
+
+# Pipeline B vision shards/R2.
+python3 tools/shard_vision_dataset.py --max-shard-gib 4
+python3 tools/upload_to_r2.py --dry-run
+```
 
 ---
 

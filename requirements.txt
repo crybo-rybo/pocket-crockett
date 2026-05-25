@@ -3,3 +3,7 @@
 
 # tools/upload_to_r2.py — S3-compatible client for Cloudflare R2.
 boto3>=1.34
+
+# tools/text_pipeline.py — PDF extraction and HTML cleanup for Pipeline A.
+pypdf>=4.0
+beautifulsoup4>=4.12
