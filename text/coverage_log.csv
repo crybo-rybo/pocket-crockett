@@ -1,0 +1,15 @@
+topic,high_sources,low_sources,total_sources,status
+shelter,3,0,3,covered
+water,4,1,5,covered
+fire,2,0,2,covered
+navigation,2,0,2,covered
+first_aid,4,0,4,covered
+low_resource_medicine,1,0,1,covered
+wound_care,1,0,1,covered
+foraging,2,1,3,covered
+edible_plants,0,1,1,gap: zero high-trust coverage
+gardening,1,4,5,covered
+farming,2,2,4,covered
+animal_husbandry,1,1,2,covered
+food_preservation,1,0,1,covered
+pre_industrial_trades,0,2,2,gap: zero high-trust coverage

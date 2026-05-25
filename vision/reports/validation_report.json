@@ -1,0 +1,34 @@
+{
+  "duplicate_content_hashes": 0,
+  "duplicate_source_image_ids": 0,
+  "duplicate_split_assignments": 0,
+  "edibility_records": 1068,
+  "generated": "2026-05-25T15:05:53+00:00",
+  "images": 316678,
+  "matched_target_below_100": [
+    {
+      "coverage_status": "",
+      "image_count": 2,
+      "scientific_name": "Atropa belladonna",
+      "taxon_id": "gbif:3802655"
+    }
+  ],
+  "max_images_per_manifest_species": 9110,
+  "min_images_per_manifest_species": 2,
+  "missing_edibility_species": [],
+  "missing_files": 0,
+  "missing_split_assignments": 0,
+  "non_output_species_in_splits": [],
+  "non_whitelisted_license_images": 0,
+  "passed": true,
+  "species": 1038,
+  "split_counts": {
+    "calibration": 1143,
+    "test": 1143,
+    "train": 8000,
+    "val": 1143
+  },
+  "unknown_license_images": 0,
+  "unmatched_targets": [],
+  "unsafe_edibility_records": 0
+}

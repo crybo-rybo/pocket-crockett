@@ -1,0 +1,48 @@
+scientific_name,priority_group,notes,taxon_id,taxon_source,matched_status,scientific_name_with_author,family,genus,rank,common_names
+Daucus carota,lookalike_review_candidate,wild-carrot confusion set; no edibility verdict assigned
+Cicuta maculata,lookalike_review_candidate,water-hemlock confusion set; no edibility verdict assigned
+Cicuta douglasii,lookalike_review_candidate,water-hemlock confusion set; no edibility verdict assigned
+Conium maculatum,lookalike_review_candidate,poison-hemlock confusion set; no edibility verdict assigned
+Zigadenus venenosus,lookalike_review_candidate,death-camas confusion set; no edibility verdict assigned
+Zigadenus paniculatus,lookalike_review_candidate,death-camas confusion set; no edibility verdict assigned
+Zigadenus glaberrimus,lookalike_review_candidate,death-camas confusion set; no edibility verdict assigned
+Allium tricoccum,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Allium canadense,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Asimina triloba,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Opuntia humifusa,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Typha latifolia,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Typha angustifolia,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Fragaria virginiana,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Rubus allegheniensis,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Rubus idaeus,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Vaccinium corymbosum,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Vaccinium angustifolium,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Sambucus canadensis,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Amelanchier alnifolia,foraging_review_candidate,high-interest NA plant; no edibility verdict assigned
+Prunus serotina,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Quercus alba,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Quercus rubra,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Acer saccharum,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Acer rubrum,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Betula papyrifera,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Fagus grandifolia,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Juglans nigra,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Carya ovata,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Pinus strobus,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Tsuga canadensis,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Juniperus virginiana,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Liriodendron tulipifera,common_tree_review_candidate,common NA tree; no edibility verdict assigned
+Toxicodendron radicans,toxic_review_candidate,high-risk contact plant; no edibility verdict assigned
+Toxicodendron diversilobum,toxic_review_candidate,high-risk contact plant; no edibility verdict assigned
+Toxicodendron vernix,toxic_review_candidate,high-risk contact plant; no edibility verdict assigned
+Phytolacca americana,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Solanum dulcamara,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Atropa belladonna,toxic_review_candidate,high-risk plant; no USDA PLANTS exact match; carried by GBIF accepted species match,gbif:3802655,GBIF species match API,gbif_exact_species_match,Atropa belladonna L.,Solanaceae,Atropa,Species,"[]"
+Digitalis purpurea,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Nerium oleander,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Actaea pachypoda,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Actaea rubra,toxic_review_candidate,high-risk plant; no edibility verdict assigned
+Urtica dioica,medicinal_review_candidate,high-interest NA plant; no edibility verdict assigned
+Plantago major,medicinal_review_candidate,high-interest NA plant; no edibility verdict assigned
+Achillea millefolium,medicinal_review_candidate,high-interest NA plant; no edibility verdict assigned
+Echinacea purpurea,medicinal_review_candidate,high-interest NA plant; no edibility verdict assigned

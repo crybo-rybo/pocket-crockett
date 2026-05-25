@@ -1,0 +1,349 @@
+Basics Rainwater harvesting Basic rainwater collection calculations
+
+Rainwater harvesting
+
+Basic rainwater collection calculations
+
+Rainwater systems The Rainbow Hostel rainwater catchment system La Yuca rainwater catchment 2011 La Yuca rainwater catchment 2012 La Yuca rainwater 2014 Las Malvinas rainwater 2014 Rainwater catchment at Pedregal Rainwater catchment at Isla Urbana Daycare rainwater catchment system Practivistas Chiapas rainwater catchment Old Growth Cellar rainwater catchment M Street Eureka rainwater catchment CCAT rainwater catchment system Ersson rainwater harvest and purification (original) Sunny Brae rainwater catchment system
+
+The Rainbow Hostel rainwater catchment system
+
+La Yuca rainwater catchment 2011
+
+La Yuca rainwater catchment 2012
+
+La Yuca rainwater 2014
+
+Las Malvinas rainwater 2014
+
+Rainwater catchment at Pedregal
+
+Rainwater catchment at Isla Urbana
+
+Daycare rainwater catchment system
+
+Practivistas Chiapas rainwater catchment
+
+Old Growth Cellar rainwater catchment
+
+M Street Eureka rainwater catchment
+
+CCAT rainwater catchment system
+
+Ersson rainwater harvest and purification (original)
+
+Sunny Brae rainwater catchment system
+
+Ground based rainwater catchment Sand dams Swales CCAT trench swales Potawot swales
+
+Sand dams
+
+Swales
+
+CCAT trench swales
+
+Potawot swales
+
+This article describes the types of common rainwater harvesters which are usable in practice and which can be built DIY . [1] Also, it provides some basic how-to content on how the harvesters can be built in practice. Rainwater harvesters are devices used to gather, or accumulate and store rainwater. [2]
+
+Contents
+
+1 Advantages
+
+2 Disadvantages
+
+3 Principles
+
+4 Systems 4.1 Domestic rooftop rainwater systems 4.1.1 System types 4.1.1.1 DIY domestic systems 4.1.1.2 Commercial domestic systems 4.1.2 System's operation 4.1.3 Practical use in autonomous houses and neighborhoods 4.2 Industrial systems
+
+4.1 Domestic rooftop rainwater systems 4.1.1 System types 4.1.1.1 DIY domestic systems 4.1.1.2 Commercial domestic systems 4.1.2 System's operation 4.1.3 Practical use in autonomous houses and neighborhoods
+
+4.1.1 System types 4.1.1.1 DIY domestic systems 4.1.1.2 Commercial domestic systems
+
+4.1.1.1 DIY domestic systems
+
+4.1.1.2 Commercial domestic systems
+
+4.1.2 System's operation
+
+4.1.3 Practical use in autonomous houses and neighborhoods
+
+4.2 Industrial systems
+
+5 Rainwater urban design and infrastructure
+
+6 Successful case studies 6.1 Petrolina, Brazil 6.2 Badulla, Sri Lanka 6.3 Rakai, Uganda 6.4 Khon Kaen, Thailand
+
+6.1 Petrolina, Brazil
+
+6.2 Badulla, Sri Lanka
+
+6.3 Rakai, Uganda
+
+6.4 Khon Kaen, Thailand
+
+7 International Rainwater Catchment Systems Association (IRCSA)
+
+8 Related projects
+
+9 See also
+
+10 External links
+
+11 References
+
+Advantages [ edit | edit source ]
+
+Fairly inexpensive
+
+Easy to reconfigure, expand, or relocate
+
+Can be installed or expanded on a 'pay as you build' basis
+
+Reliable
+
+Water chemistry is easy to manage
+
+Can be sized to the need at hand, and integrated into new construction easily
+
+Extremely good back up system
+
+Can easily be tied into well water system
+
+Can be put inside a barn, large garage, or in a basement
+
+Water is still available if you have no power
+
+Pumps can run off solar or 12 volt systems
+
+Tanks rarely freeze except in sustained extreme cold due to their thermal mass
+
+Easy to tie into solar water system
+
+Most of the system is accessible, so repairs are easy
+
+Few expensive components
+
+Disadvantages [ edit | edit source ]
+
+Aesthetically intrusive - you have to do something with big tanks
+
+May not meet local building code requirements for primary water source for new construction
+
+Requires more ground space than a well for the storage tanks and pumping system
+
+Requires a good sized roof
+
+Roof materials and airborne pollutants can pollute the rainwater
+
+Gutters require constant maintenance and cleaning [3]
+
+Principles [ edit | edit source ]
+
+Outline of the principles for designing rainwater harvesting systems laid out by Brad Lancaster: [4]
+
+Begin with long and thoughtful observation
+
+Start at the top (highpoint) of your watershed and work your way down
+
+Start small and simple
+
+Slow, spread, and infiltrate the flow of water
+
+Always plan an overflow route, and manage that overflow as a resource
+
+Maximize living and organic groundcover
+
+Maximize beneficial relationships and efficiency by 'stacking functions'
+
+Continually reassess your system: the 'feedback loop'
+
+Systems [ edit | edit source ]
+
+There are many types of systems to harvest rainwater. Notable systems are systems for runoff rainwater (e.g. hillside run-off) and rooftop rainwater harvesting systems. The type used depends greatly on the purpose (domestic or industrial use) and to some extent also on economics and physical and human considerations. Generally speaking, rooftop rainwater systems are most used as they are most economical (if there is more than 254mm of precipitation a year). [5] To determine the amount of precipitation falling in your area, refer to Climate data#Precipitation .
+
+Domestic rooftop rainwater systems [ edit | edit source ]
+
+At the moment, 2 types of systems are generally used. These include DIY and commercial systems. Both of these systems are known under the term water harvesters and require only a limited amount of knowledge to set up (if basic systems are used). In both cases, the system consists of a storage tank to store the water and piping (to guide the water in). Additionally, extra pressuring equipment as pressure vessels , inline pump controllers or pressure sensitive pumps may also be required. [6] Finally, water purifying equipment as water-purifying plants , UV-lights or distillation equipment are sometimes (depending on local conditions [7] ) added to purify the collected water. The system is then called a Greywater treatment system . Greywater systems are usually preferred over regular water harvesters as they allow the system to not only treat the rainwater, but water from other sources as well (e.g. the watercloset ; if plants are used). However, this feature may also be averted by using a UV-lamp and composting toilet instead.
+
+Depending on local circumstances, a gravity -fed system may already be enough to have a pressured water collection system. [8] In the latter case, no pumps/pressure vessels are thus required to have a pressured system. In practice, gravity-controlled systems are usually created by placing the water harvester on an elevation (e.g. rooftops).
+
+As water conservation is becoming more and more popular, more people have begun to make their own homebrew installation. These systems range from traditional technologies like rain barrels to more complex greywater systems. Through the Internet, plans and accurate construction information have become available. [9] [10] [11] Depending on the degree of personal skill and preference, a more basic (regular water tank and piping [12] ) or more advanced (e.g. pressured systems with water treatment, etc.) system is chosen.
+
+Commercial systems are also made. They are offered by a variety of companies... Commercial rain harvesters can be obtained in both pressurized [13] as gravity-fed systems. [14] Greywater treatment systems are sold by companies as Nubian Water Systems and others. [15] Again, they are available in pressurised as gravity-fed systems. [16] [17]
+
+A mechanism can be used to send the initial water flow to waste, usually the first few liters. These are commonly known as first flush diverters, and are used to increase the chance that the large-particle residue that might accumulate on your collection surface is washed away from (and not into) your storage tank . Such a system also compensates for the fact that the initial minutes of a rainfall can include airborne pollutants being washed from the sky [ verification needed ] , and likewise minimizes contamination of your captured supply. Simple but regular inspection and maintenance of such a device is usually necessary.
+
+Not all catchment systems use such a feature. For example, rainwater in rural areas of Australia is traditionally used without such a system, and without treatment, [ verification needed ] but this may be unwise Template:Vague in different environments.
+
+Most desert and temperate climates get at least 250 mm of rain per year. This means that a typical one-story house with a greywater system can supply its year-round water needs from its roof alone. In the driest areas, it might require a cistern of 30m³. Many areas average 13 mm of rain per week, and these can use a cistern as small as 10m³.
+
+In many areas, it is difficult to keep a roof clean enough for drinking. [18] To reduce dirt and bad tastes, systems use a metal collecting-roof and a "roof cleaner" tank that diverts the first 40 liters. Cistern water is usually chlorinated , though reverse osmosis systems provide even better quality drinking water.
+
+Modern cisterns are usually large plastic tanks. Gravity tanks on short towers are reliable, so pump repairs are less urgent. The least expensive bulk cistern is a fenced pond or pool at ground level.
+
+Reducing autonomy reduces the size and expense of cisterns. Many autonomous homes can reduce water use below 10 US gal per person per day, so that in a drought a month of water can be delivered inexpensively via truck. Self-delivery is often possible by installing fabric water tanks that fit the bed of a pick-up truck.
+
+It can be convenient to use the cistern as a heat sink or trap for a heat pump or air conditioning system; however this can make cold drinking water warm, and in drier years may decrease the efficiency of the HVAC system.
+
+Industrial systems [ edit | edit source ]
+
+Rainwater may also be used for groundwater recharge , where the runoff on the ground is collected and allowed to be absorbed, adding to the groundwater . In US, rooftop rainwater is collected and stored in sump. [19]
+
+In India this includes Bawdis and johads , or ponds which collect the run-off from small streams in wide area. [20] [21] [22]
+
+In India, reservoirs called tankas were used to store water; typically they were shallow with mud walls. Ancient tankas still exist in some places. [23]
+
+Rainwater urban design and infrastructure [ edit | edit source ]
+
+Rain is a vital resource that fills our rivers and replenishes our surface and groundwater supply (see Groundwater recharge ). Unfortunately, concrete and other impervious surfaces that make up much of today's (sub)urban landscape interfere with the hydrologic cycle and prevent the natural infiltration process from occurring. Many cities are also plagued with an aging infrastructure and leaky pipes. Municipalities can lose as much as 40 percent of treated water due to faulty pipes and other equipment. [24] This "lost" water exacerbates water shortages and can lead communities to invest in costly new water infrastructure (e.g., dams and river diversions). Communities such as Holliston, Massachusetts are planning to maximize green space for water recharge and are developing wastewater management systems that return high levels of treated water back to the community for local use rather than piping effluent 50 to 100 miles to an upstream town for treatment. [25]
+
+In addition, communities can utilize model ordinances to create stream buffers; street, schoolyard and parking lot designs; and residential landscape recommendations to increase the portion of rainfall that is absorbed and replenishes groundwater supplies. When communities maximize their infiltration potential, they can reduce their reliance on traditional water infrastructure mechanisms, such as dams. A 2002 report by American Rivers, Natural Resources Defense Council and Smart Growth America entitled Paving Our Way to Water Shortages [26] recommends the following:
+
+Allocate more resources to identify and protect open space and critical aquatic areas;
+
+Practice sound growth management by passing stronger, more comprehensive legislation that includes incentives for smart growth [27] and designated growth areas;
+
+Integrate water supply into planning efforts by coordinating road building and other construction projects with water resource management activities;
+
+Invest in existing communities by rehabilitating infrastructure before building anew - a "fix it first" strategy of development;
+
+Encourage compact development that mixes retail, commercial and residential development;
+
+Replace concrete sewer and tunnel infrastructure - which convey stormwater too swiftly into waterways - with low-impact development techniques that replenish groundwater. These include onsite storage that allows the water to infiltrate permeable native soils or bioengineering techniques that facilitate evaporation and transpiration of stormwater; and
+
+Devote more money and time to research and analysis of the impact of development on water resources, and make this information accessible to the public.
+
+Successful case studies [ edit | edit source ]
+
+Petrolina, Brazil [ edit | edit source ]
+
+Climate: Semi Arid; Rainwater used as main source
+
+Petrolina is in the semi arid belt of Northeastern Brazil. Rainfall is low and varies greatly year-on-year. A solution to the water-scarcity problem is the use of large (10,000-20,000 litre) tanks that can store enough water to last a frugal household until the next rains. The tanks are usually provided by NGOs as the large structures necessary in this very arid area cost over $200 and are unaffordable for the local population.
+
+Badulla, Sri Lanka [ edit | edit source ]
+
+Climate: Tropical, Bimodal; Rainwater used as main source
+
+The town of Badulla is located in a hilly area of Sri Lanka. Groundwater sources are few and tend to be at the bottom of the hills. To reduce the burden of carrying water the local authority provided 5,000 litre ferrocement tanks, at a cost of about $150 which are used for most household water supply. The tanks are now being adopted nationwide for use in areas where access to other protected water sources is difficult.
+
+Rakai, Uganda [ edit | edit source ]
+
+Climate: Tropical, Bimodal; Rainwater used as suplimentary source
+
+Rakai is in the southern hills of Uganda. It has a bimodal rainfall pattern and hence a dry season of only 2 months. A local women's group was trained in tank making by a Kenyan women's group and have made a large number of small (700 litre) jars to supplement their water use, particularly in the wet season when they provide the bulk of water needs. The sub $70 cost of the systems are financed by a self sustaining revolving fund.
+
+Khon Kaen, Thailand [ edit | edit source ]
+
+Climate: Tropical, Monsoon; Rainwater used as primary source
+
+Northeast Thailand was the scene of one of the world's largest roof water harvesting disseminations. The technology of choice was the 1-2,000 litre "Thai jar" The project passed through several stages with reducing outside intervention, eventually becoming a commercial market producing jars in large numbers for less than $30. This encouraged rapid penetration of rainwater jars and today most houses, rich or poor , have at least one. [1]
+
+International Rainwater Catchment Systems Association (IRCSA) [ edit | edit source ]
+
+The purpose of the IRCSA aims to promote and advance rainwater catchment systems technology with respect to planning, development, management, science, technology, research and education worldwide; establish an international forum for scientists, engineers, educators, administrators and those concerned in this field. http://www.ircsa.org/
+
+The primary objectives of the IRCSA are:
+
+The promotion and advancement of Rainwater Catchment Systems Technology with respect to planning, development, management, science, technology, research and education world-wide.
+
+The establishment of an International forum for scientists, engineers, educators, administrators and all others who are, directly or indirectly, concerned in rainwater catchment system programs to link all those working in this field so that information and experiences can be shared.
+
+The drafting of international guidelines on the use of Rainwater Catchment Systems technology and the updating and dissemination of this information.
+
+The collaboration with and support of International Programs in the field of Rainwater Catchment Systems including co-operation with other organizations having activities in common.
+
+The support and continuation of the International Rainwater Catchment Systems Conference series.
+
+Related projects [ edit | edit source ]
+
+See also [ edit | edit source ]
+
+To Catch the Rain - book on rainwater harvesting based on Appropedia content
+
+Basic rainwater collection calculations
+
+Rainwater catchment literature review
+
+Rainwater harvesting - rainwater harvesting system set-up information
+
+External links [ edit | edit source ]
+
+Wikipedia:Rainwater harvesting
+
+New method of rainwater harvesting
+
+Legality of rainwater collection by state in the United States
+
+HarvestH2o rainwater harvesting community
+
+Rainwater Harvesting website of the Texas A&M AgriLife Extension Service
+
+Rainwater collection products
+
+International Rainwater Catchment Systems Association
+
+Rainwater harvesting Facts
+
+Reducing rainwater harvestings risk of Legionnaires Disease
+
+Rainwater catchment forums at Permies.com
+
+References [ edit | edit source ]
+
+↑ Rainwater harvesting information composed from deleted info from Wikipedia's rainwater harvesting article
+
+↑ Definition of rainwater harvesting
+
+↑ http://web.archive.org/web/20110228150726/http://www.thefarm.org:80/charities/i4at/surv/raincat.htm
+
+↑ https://www.harvestingrainwater.com/store/
+
+↑ Earthship Volume 2:Systems and components
+
+↑ Pressurising equipment sometimes required for rainwater collection systems
+
+↑ Water treatments sometimes not needed
+
+↑ Gravity-fed system through height difference also sometimes enough for pressured water collection system
+
+↑ Roofwater harvesting information (ebooks,...)
+
+↑ VillageEarth Water harvesting information
+
+↑ Concrete list of DIY-rainwater harvester systems and how to build them
+
+↑ The Farm's DIY gravity-fed rainwater harvester
+
+↑ Rainman water harvesters system operation
+
+↑ Gravity-fed rain harvester
+
+↑ Other commercial rain water harvesting systems
+
+↑ Greywater systems aviable in gravity-fed as pressurised form
+
+↑ Example of gravity-fed greywater system
+
+↑ Cistern Design, University of Alaska, referenced 2007-12-27
+
+↑ Rainwater Harvesting and Water Purification System.
+
+↑ The River maker, New Scientist, 7 September 2002. Online edition (full article by subscription)
+
+↑ Rima Hooja: "Channeling Nature: Hydraulics, Traditional Knowledge Systems, And Water Resource Management in India - A Historical Perspective"
+
+↑ Recharging the groundwater in this way is claimed to not only improve the year-round availability of groundwater, but also lead to more richer vegetation. (I was going to add this and realized I don't know if it's a direct effect of higher water tables, or if they're using the groundwater to irrigate, thus causing the greening. --Singkong2005
+
+↑ Rima Hooja: "Channeling Nature: Hydraulics, Traditional Knowledge Systems, And Water Resource Management in India - A Historical Perspective"
+
+↑ NYCWasteLe$$ Business, The Port Authority of New York and New Jersey at LaGuardia Airport, Water Conservation: Restrooms, October 2001, http://www.nycwasteless.com/gov-bus/Casestudies/lgacase2.htm (24 January 2002).
+
+↑ Charles River Watershed Association, Environmental Zoning Project: Sustaining Water Resources in Holliston, http://www.craw.org (17 January 2002).
+
+↑ American Rivers, Natural Resources Defense Council, and Smart Growth America. Paving Our Way to Water Shortages: How Sprawl Aggravates the Effects of Drought. Washington, D.C.: American Rivers, 2002.
+
+↑ While smart growth has been used many different ways, in this context it is used to refer to ten principles of smart growth put out by Smart Growth America that range from infrastructure investments like roads and sewers to economic incentives to encourage revitalization of existing communities. A full list of the ten principles can be found at http://www.smartgrowthamerica.org .
+
+Page data Part of PH261 Keywords rainwater , homepage , water gallery SDG SDG06 Clean water and sanitation Authors Lonny Grafman License CC-BY-SA-3.0 Ported from https://archive.internationalrivers.org/resources/beyond-dams-options-alternatives-3966 ( original ) Language English (en) Translations Galician , Korean Related 2 subpages , 71 pages link here Aliases Rainwater management , Rainwater , Rainwater Catchment , RAINWATER HARVESTING , Rain water , Rain , Rain Water Catchment System , Rainwater Catchment System , Portal:Rainwater harvesting , Portal:Rainwater , Rain water collection , Appropriate water supply manual 2.1 , Appropriate water supply manual 2.11 , Rainwater catchment , Principles of Rainwater Harvesting , Rainwater book , Rainwater harvesters , Original:Rainwater harvesting , Original:Rainwater management Impact 14,696 page views Created April 24, 2007 by Chris Watkins Modified October 23, 2023 by StandardWikitext bot Cite as Lonny Grafman (2007-2023). "Rainwater harvesting" . Appropedia . Retrieved February 22, 2024 . API queries basic , semantic , html , files , more

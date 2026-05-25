@@ -1,0 +1,2 @@
+source_id,old_ocr_quality,new_ocr_quality,word_count,long_garble_tokens,checks,notes
+us_army_fm_21_76,clean,clean,89672,0,page markers=True; survival heading readable=True; plant section readable=True; low replacement character rate=True,Spot-check found readable headings and plant/first-aid content with no replacement characters; retained clean flag.

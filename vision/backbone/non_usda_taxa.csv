@@ -1,0 +1,2 @@
+taxon_id,scientific_name,scientific_name_with_author,common_names,family,genus,rank,source,matched_status,notes
+gbif:3802655,Atropa belladonna,Atropa belladonna L.,[],Solanaceae,Atropa,Species,GBIF species match API,gbif_exact_species_match,high-risk plant; no USDA PLANTS exact match; carried by GBIF accepted species match

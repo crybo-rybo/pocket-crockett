@@ -1,0 +1,27 @@
+{
+  "policy_date": "2026-05-25",
+  "notes": [
+    "License filtering must happen before retaining an image.",
+    "Unknown, missing, all-rights-reserved, and no-derivatives image licenses are rejected.",
+    "Non-commercial Creative Commons licenses are accepted for this research/offline prototype dataset but must remain visible in downstream manifests because they constrain reuse."
+  ],
+  "accepted": [
+    "cc0",
+    "cc-by",
+    "cc-by-4.0",
+    "cc-by-sa",
+    "cc-by-sa-4.0",
+    "cc-by-nc",
+    "cc-by-nc-4.0",
+    "cc-by-nc-sa",
+    "cc-by-nc-sa-4.0"
+  ],
+  "rejected": [
+    "unknown",
+    "",
+    "all-rights-reserved",
+    "copyright",
+    "cc-by-nd",
+    "cc-by-nc-nd"
+  ]
+}

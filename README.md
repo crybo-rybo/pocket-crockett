@@ -102,6 +102,12 @@ Gather labeled North American plant imagery → fine-tune a bio-pretrained class
 - **Surface deadly look-alikes loudly** — water hemlock, poison hemlock, death camas, deadly *Amanita* — regardless of score.
 - **Cite sources** in chat answers; tag low-trust (old herbal) vs. high-trust (modern gov/medical) material.
 
+## Data storage and licensing
+
+The vision image bytes are not committed to git. They are packaged as tar shards under `vision/shards/` and tracked by committed manifests plus `vision/checksums.sha256`; see `vision/data_storage.md`.
+
+The current vision dataset is for a personal, non-commercial project and includes CC-BY-SA, CC-BY-NC, and CC-BY-NC-SA-family images. Keep any image bucket private. If project intent changes to commercial or public redistribution, revisit NC image retention and share-alike obligations before releasing data, derived dataset artifacts, or model weights.
+
 ---
 
 ## Suggested build order
@@ -116,4 +122,3 @@ Gather labeled North American plant imagery → fine-tune a bio-pretrained class
 ---
 
 *Pocket Crockett — keep the frontier in your pocket.*
-

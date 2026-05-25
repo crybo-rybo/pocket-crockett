@@ -1,0 +1,212 @@
+{
+  "conceptdoi": "10.5281/zenodo.4726652",
+  "conceptrecid": "4726652",
+  "created": "2026-02-11T14:54:21.033457+00:00",
+  "doi": "10.5281/zenodo.10419064",
+  "doi_url": "https://doi.org/10.5281/zenodo.10419064",
+  "files": [
+    {
+      "checksum": "md5:459b90c81cd8798e15e6f12a0ea56f64",
+      "id": "b7d6aab8-8965-44f2-abb1-80e75b967118",
+      "key": "images.zip",
+      "links": {
+        "self": "https://zenodo.org/api/records/10419064/files/images.zip/content"
+      },
+      "size": 41819638938
+    },
+    {
+      "checksum": "md5:998a460db326260a32826104cca21a65",
+      "id": "ee4b9f84-91c8-489d-9cb8-d30b13ebb5f9",
+      "key": "README.md",
+      "links": {
+        "self": "https://zenodo.org/api/records/10419064/files/README.md/content"
+      },
+      "size": 5029
+    },
+    {
+      "checksum": "md5:106b21ebc7bdde38725ad49e299ebc74",
+      "id": "9219054f-d935-49e3-b70b-dfad3816c606",
+      "key": "species_metadata.csv",
+      "links": {
+        "self": "https://zenodo.org/api/records/10419064/files/species_metadata.csv/content"
+      },
+      "size": 106651
+    },
+    {
+      "checksum": "md5:87e7d4b94f2b709524a7e90c7e9060ba",
+      "id": "a9bb7fe2-6d4e-49c3-953d-3ae7aba87496",
+      "key": "plantnet300K_metadata.csv",
+      "links": {
+        "self": "https://zenodo.org/api/records/10419064/files/plantnet300K_metadata.csv/content"
+      },
+      "size": 27738434
+    }
+  ],
+  "id": 10419064,
+  "links": {
+    "access": "https://zenodo.org/api/records/10419064/access",
+    "access_grants": "https://zenodo.org/api/records/10419064/access/grants",
+    "access_links": "https://zenodo.org/api/records/10419064/access/links",
+    "access_request": "https://zenodo.org/api/records/10419064/access/request",
+    "access_users": "https://zenodo.org/api/records/10419064/access/users",
+    "archive": "https://zenodo.org/api/records/10419064/files-archive",
+    "archive_media": "https://zenodo.org/api/records/10419064/media-files-archive",
+    "communities": "https://zenodo.org/api/records/10419064/communities",
+    "communities-suggestions": "https://zenodo.org/api/records/10419064/communities-suggestions",
+    "doi": "https://doi.org/10.5281/zenodo.10419064",
+    "draft": "https://zenodo.org/api/records/10419064/draft",
+    "file_modification": "https://zenodo.org/api/records/10419064/file-modification",
+    "files": "https://zenodo.org/api/records/10419064/files",
+    "latest": "https://zenodo.org/api/records/10419064/versions/latest",
+    "latest_html": "https://zenodo.org/records/10419064/latest",
+    "media_files": "https://zenodo.org/api/records/10419064/media-files",
+    "parent": "https://zenodo.org/api/records/4726652",
+    "parent_doi": "https://doi.org/10.5281/zenodo.4726652",
+    "parent_doi_html": "https://zenodo.org/doi/10.5281/zenodo.4726652",
+    "parent_html": "https://zenodo.org/records/4726652",
+    "preview_html": "https://zenodo.org/records/10419064?preview=1",
+    "quota_increase": "https://zenodo.org/api/records/10419064/quota-increase",
+    "request_deletion": "https://zenodo.org/api/records/10419064/request-deletion",
+    "requests": "https://zenodo.org/api/records/10419064/requests",
+    "reserve_doi": "https://zenodo.org/api/records/10419064/draft/pids/doi",
+    "self": "https://zenodo.org/api/records/10419064",
+    "self_doi": "https://doi.org/10.5281/zenodo.10419064",
+    "self_doi_html": "https://zenodo.org/doi/10.5281/zenodo.10419064",
+    "self_html": "https://zenodo.org/records/10419064",
+    "self_iiif_manifest": "https://zenodo.org/api/iiif/record:10419064/manifest",
+    "self_iiif_sequence": "https://zenodo.org/api/iiif/record:10419064/sequence/default",
+    "versions": "https://zenodo.org/api/records/10419064/versions"
+  },
+  "metadata": {
+    "access_right": "open",
+    "communities": [
+      {
+        "id": "eu"
+      }
+    ],
+    "creators": [
+      {
+        "affiliation": "IMAG, Univ Montpellier, Inria, CNRS",
+        "name": "Camille Garcin",
+        "orcid": "0000-0003-4504-7040"
+      },
+      {
+        "affiliation": "Inria, LIRMM, Univ Montpellier, CNRS",
+        "name": "Alexis Joly",
+        "orcid": "0000-0002-2161-9940"
+      },
+      {
+        "affiliation": "CIRAD, AMAP",
+        "name": "Pierre Bonnet",
+        "orcid": "0000-0002-2828-4389"
+      },
+      {
+        "affiliation": "CIRAD, AMAP, Inria, LIRMM, Univ Montpellier, CNRS",
+        "name": "Antoine Affouard"
+      },
+      {
+        "affiliation": "Inria, LIRMM, Univ Montpellier, CNRS",
+        "name": "Jean-Christophe Lombardo"
+      },
+      {
+        "affiliation": "CIRAD, AMAP, Inria, LIRMM, Univ Montpellier, CNRS",
+        "name": "Mathias Chouet"
+      },
+      {
+        "affiliation": "LIRMM, AMIS, UPVM, Univ Montpellier, CNRS",
+        "name": "Maximilien Servajean",
+        "orcid": "0000-0002-9426-2583"
+      },
+      {
+        "affiliation": "Inria, LIRMM, Univ Montpellier, CNRS",
+        "name": "Titouan Lorieul"
+      },
+      {
+        "affiliation": "CIRAD, AMAP",
+        "name": "Go\u00ebau, Herv\u00e9",
+        "orcid": "0000-0003-3296-3795"
+      },
+      {
+        "affiliation": "IMAG, Univ Montpellier, CNRS",
+        "name": "Joseph Salmon",
+        "orcid": "0000-0002-3181-0634"
+      }
+    ],
+    "dates": [
+      {
+        "type": "updated"
+      }
+    ],
+    "description": "<p><strong>Pl@ntNet-300K-v2</strong> is an image dataset designed for evaluating set-valued classification methods. It is derived from the <a href=\"https://plantnet.org/\" target=\"_blank\" rel=\"noopener\">Pl@ntNet</a> citizen observatory database and comprises <strong>306,087 images</strong> spanning <strong>1,000 plant species</strong>.The new version provides improved images resolution and better naming for the species.</p>\n<h2>Key Features</h2>\n<p>The dataset reflects two notable characteristics, intrinsic to both the image acquisition process and the morphological diversity of plants:</p>\n<ul>\n<li><strong>Strong class imbalance:</strong> A few species account for the majority of images.</li>\n<li><strong>Visual similarity:</strong> Many species are visually indistinguishable, posing challenges even for expert identification.</li>\n</ul>\n<p>These attributes make <strong>Pl@ntNet-300K-v2</strong> particularly suited for benchmarking set-valued classification approaches.</p>\n<h2>Dataset Structure</h2>\n<h3>Image Organization</h3>\n<p>Images are partitioned into <code>train</code>, <code>test</code>, and <code>val</code> sets, stored in directories labeled <code>0000</code> to <code>0999</code>.</p>\n<h3>Metadata Files</h3>\n<h4>1. <code>plantnet300K_metadata.csv</code></h4>\n<p>Contains <strong>306,087 image entries</strong>, each with the following fields:</p>\n<table>\n<thead>\n<tr>\n<th>Field</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>species_id</code></td>\n<td>Numerical species index (0&ndash;999)</td>\n</tr>\n<tr>\n<td><code>PN_observation_id</code></td>\n<td>Unique Pl@ntNet observation identifier</td>\n</tr>\n<tr>\n<td><code>organ</code></td>\n<td>Plant organ in the image (<code>leaf</code>, <code>flower</code>, <code>other</code>, <code>habit</code>, <code>fruit</code>, etc.)</td>\n</tr>\n<tr>\n<td><code>author</code></td>\n<td>Photographer&rsquo;s identity</td>\n</tr>\n<tr>\n<td><code>license</code></td>\n<td>Image license type (<code>cc-by-sa</code>, <code>cc-by-nc</code>, <code>cc-by-nc-sa</code>)</td>\n</tr>\n<tr>\n<td><code>split</code></td>\n<td>Dataset partition (<code>train</code>, <code>test</code>, <code>val</code>)</td>\n</tr>\n<tr>\n<td><code>PN_hash</code></td>\n<td>Image hash name</td>\n</tr>\n</tbody>\n</table>\n<h4>2. <code>species_metadata.csv</code></h4>\n<p>Provides taxonomic and conservation details for each species (aligned with the <em>World Checklist of Vascular Plants, v13</em>):</p>\n<table>\n<thead>\n<tr>\n<th>Field</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td><code>species_id</code></td>\n<td>Numerical species index (matches image directories)</td>\n</tr>\n<tr>\n<td><code>full_species</code></td>\n<td>Full species name (with author)</td>\n</tr>\n<tr>\n<td><code>species</code></td>\n<td>Species name (without author)</td>\n</tr>\n<tr>\n<td><code>genus</code></td>\n<td>Genus name</td>\n</tr>\n<tr>\n<td><code>family</code></td>\n<td>Family name</td>\n</tr>\n<tr>\n<td><code>epithet</code></td>\n<td>Species epithet</td>\n</tr>\n<tr>\n<td><code>author</code></td>\n<td>Species name author(s)</td>\n</tr>\n<tr>\n<td><code>unmatched_terms</code></td>\n<td>Unresolved terms (e.g., <code>spp.</code>, <code>f.</code>)</td>\n</tr>\n<tr>\n<td><code>iucn_status</code></td>\n<td>IUCN conservation status (e.g., <strong>EX</strong>, <strong>CR</strong>, <strong>EN</strong>, <strong>VU</strong>, <strong>LC</strong>, <strong>DD</strong>, <strong>NE</strong>)</td>\n</tr>\n</tbody>\n</table>\n<h2>Resources</h2>\n<h3>Scientific Publication</h3>\n<p>The dataset and baseline results are described in:</p>\n<p><a href=\"https://openreview.net/forum?id=eLYinD0TtIt\" target=\"_blank\" rel=\"noopener\">Garcin et al. (2021), NeurIPS Datasets and Benchmarks</a></p>\n<h3>Utilities</h3>\n<p><strong>PyTorch tools</strong> for data loading and model training:</p>\n<p><a href=\"https://github.com/plantnet/PlantNet-300K/\" target=\"_blank\" rel=\"noopener\">GitHub Repository</a></p>\n<h2>Citation</h2>\n<p>If you use this dataset, please cite the following publication:</p>\n<pre>@inproceedings{Garcin_Joly_Bonnet_Affouard_Lombardo_Chouet_Servajean_Lorieul_Salmon2021,\n  author    = {Garcin, C. and Joly, A. and Bonnet, P. and Affouard, A. and Lombardo, J.-C. and Chouet, M. and Servajean, M. and Lorieul, T. and Salmon, J.},\n  booktitle = {Proceedings of the Neural Information Processing Systems Track on Datasets and Benchmarks},\n  pdf       = {https://datasets-benchmarks-proceedings.neurips.cc/paper/2021/file/7e7757b1e12abcb736ab9a754ffb617a-Paper-round2.pdf},\n  title     = {Pl@ntNet-300K: a plant image dataset with high label ambiguity and a long-tailed distribution},\n  year      = {2021},\n  comment   = {[&lt;a href=\"https://github.com/plantnet/PlantNet-300K\"&gt;Code&lt;/a&gt;]}\n}</pre>",
+    "doi": "10.5281/zenodo.10419064",
+    "grants": [
+      {
+        "acronym": "COS4CLOUD",
+        "code": "863463",
+        "funder": {
+          "acronym": "EC",
+          "doi": "10.13039/501100000780",
+          "name": "European Commission"
+        },
+        "internal_id": "10.13039/501100000780::863463",
+        "program": "H2020-EU.1.4.",
+        "title": "Co-designed Citizen Observatories Services for the EOS-Cloud",
+        "url": "https://cordis.europa.eu/projects/863463"
+      }
+    ],
+    "keywords": [
+      "plant",
+      "images",
+      "identification",
+      "classification",
+      "Pl@ntNet",
+      "species"
+    ],
+    "license": {
+      "id": "cc-by-4.0"
+    },
+    "publication_date": "2026-02-11",
+    "relations": {
+      "version": [
+        {
+          "index": 2,
+          "is_last": true,
+          "parent": {
+            "pid_type": "recid",
+            "pid_value": "4726652"
+          }
+        }
+      ]
+    },
+    "resource_type": {
+      "title": "Dataset",
+      "type": "dataset"
+    },
+    "title": "Pl@ntNet-300K-v2 image dataset",
+    "version": "2.0"
+  },
+  "modified": "2026-02-11T16:19:52.460952+00:00",
+  "owners": [
+    {
+      "id": "90489"
+    }
+  ],
+  "recid": "10419064",
+  "revision": 6,
+  "state": "done",
+  "stats": {
+    "downloads": 34755,
+    "unique_downloads": 13652,
+    "unique_views": 49181,
+    "version_downloads": 2886,
+    "version_unique_downloads": 1026,
+    "version_unique_views": 927,
+    "version_views": 1027,
+    "views": 54710
+  },
+  "status": "published",
+  "submitted": true,
+  "swh": {},
+  "title": "Pl@ntNet-300K-v2 image dataset",
+  "updated": "2026-02-11T16:19:52.460952+00:00"
+}
