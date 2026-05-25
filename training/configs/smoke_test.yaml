@@ -1,0 +1,24 @@
+model:
+  type: timm
+  name: convnext_tiny.fb_in22k_ft_in1k
+  pretrained: true
+  drop_rate: 0.1
+
+data:
+  image_size: 224
+  batch_size: 16
+  num_workers: 2
+  weighted_sampler: true
+  max_train_samples: 256
+  max_val_samples: 64
+
+training:
+  epochs: 2
+  learning_rate: 0.0003
+  weight_decay: 0.05
+  freeze_backbone_epochs: 1
+  weighted_loss: true
+
+# Intended for RunPod after:
+#   SHARDS="train-000.tar val-000.tar" ./runpod/bootstrap.sh
+#   ./runpod/train.sh smoke

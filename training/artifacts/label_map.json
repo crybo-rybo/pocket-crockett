@@ -1,0 +1,479 @@
+{
+  "version": 1,
+  "num_classes": 47,
+  "source": "vision/splits/output_classes.csv",
+  "classes": [
+    {
+      "class_index": 0,
+      "scientific_name": "Acer rubrum",
+      "requested_scientific_name": "Acer rubrum",
+      "taxon_id": "usda:ACRU",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 1,
+      "scientific_name": "Acer saccharum",
+      "requested_scientific_name": "Acer saccharum",
+      "taxon_id": "usda:ACSA3",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 2,
+      "scientific_name": "Achillea millefolium",
+      "requested_scientific_name": "Achillea millefolium",
+      "taxon_id": "usda:ACMI2",
+      "priority_group": "medicinal_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 3,
+      "scientific_name": "Actaea pachypoda",
+      "requested_scientific_name": "Actaea pachypoda",
+      "taxon_id": "usda:ACPA",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 4,
+      "scientific_name": "Actaea rubra",
+      "requested_scientific_name": "Actaea rubra",
+      "taxon_id": "usda:ACRU2",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 5,
+      "scientific_name": "Allium canadense",
+      "requested_scientific_name": "Allium canadense",
+      "taxon_id": "usda:ALCA3",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 6,
+      "scientific_name": "Allium tricoccum",
+      "requested_scientific_name": "Allium tricoccum",
+      "taxon_id": "usda:ALTR3",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 7,
+      "scientific_name": "Amelanchier alnifolia",
+      "requested_scientific_name": "Amelanchier alnifolia",
+      "taxon_id": "usda:AMAL2",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 8,
+      "scientific_name": "Asimina triloba",
+      "requested_scientific_name": "Asimina triloba",
+      "taxon_id": "usda:ASTR",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 9,
+      "scientific_name": "Atropa belladonna",
+      "requested_scientific_name": "Atropa belladonna",
+      "taxon_id": "gbif:3802655",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "gbif_exact_species_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 10,
+      "scientific_name": "Betula papyrifera",
+      "requested_scientific_name": "Betula papyrifera",
+      "taxon_id": "usda:BEPA",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 11,
+      "scientific_name": "Carya ovata",
+      "requested_scientific_name": "Carya ovata",
+      "taxon_id": "usda:CAOV2",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 12,
+      "scientific_name": "Cicuta douglasii",
+      "requested_scientific_name": "Cicuta douglasii",
+      "taxon_id": "usda:CIDO",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 13,
+      "scientific_name": "Cicuta maculata",
+      "requested_scientific_name": "Cicuta maculata",
+      "taxon_id": "usda:CIMA2",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 14,
+      "scientific_name": "Conium maculatum",
+      "requested_scientific_name": "Conium maculatum",
+      "taxon_id": "usda:COMA2",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 15,
+      "scientific_name": "Daucus carota",
+      "requested_scientific_name": "Daucus carota",
+      "taxon_id": "usda:DACA6",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 16,
+      "scientific_name": "Digitalis purpurea",
+      "requested_scientific_name": "Digitalis purpurea",
+      "taxon_id": "usda:DIPU",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 17,
+      "scientific_name": "Echinacea purpurea",
+      "requested_scientific_name": "Echinacea purpurea",
+      "taxon_id": "usda:ECPU",
+      "priority_group": "medicinal_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 18,
+      "scientific_name": "Fagus grandifolia",
+      "requested_scientific_name": "Fagus grandifolia",
+      "taxon_id": "usda:FAGR",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 19,
+      "scientific_name": "Fragaria virginiana",
+      "requested_scientific_name": "Fragaria virginiana",
+      "taxon_id": "usda:FRVI",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 20,
+      "scientific_name": "Juglans nigra",
+      "requested_scientific_name": "Juglans nigra",
+      "taxon_id": "usda:JUNI",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 21,
+      "scientific_name": "Juniperus virginiana",
+      "requested_scientific_name": "Juniperus virginiana",
+      "taxon_id": "usda:JUVI",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 22,
+      "scientific_name": "Liriodendron tulipifera",
+      "requested_scientific_name": "Liriodendron tulipifera",
+      "taxon_id": "usda:LITU",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 23,
+      "scientific_name": "Nerium oleander",
+      "requested_scientific_name": "Nerium oleander",
+      "taxon_id": "usda:NEOL",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 24,
+      "scientific_name": "Opuntia humifusa",
+      "requested_scientific_name": "Opuntia humifusa",
+      "taxon_id": "usda:OPHU",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 25,
+      "scientific_name": "Phytolacca americana",
+      "requested_scientific_name": "Phytolacca americana",
+      "taxon_id": "usda:PHAM4",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 26,
+      "scientific_name": "Pinus strobus",
+      "requested_scientific_name": "Pinus strobus",
+      "taxon_id": "usda:PIST",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 27,
+      "scientific_name": "Plantago major",
+      "requested_scientific_name": "Plantago major",
+      "taxon_id": "usda:PLMA2",
+      "priority_group": "medicinal_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 28,
+      "scientific_name": "Prunus serotina",
+      "requested_scientific_name": "Prunus serotina",
+      "taxon_id": "usda:PRSE2",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 29,
+      "scientific_name": "Quercus alba",
+      "requested_scientific_name": "Quercus alba",
+      "taxon_id": "usda:QUAL",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 30,
+      "scientific_name": "Quercus rubra",
+      "requested_scientific_name": "Quercus rubra",
+      "taxon_id": "usda:QURU",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 31,
+      "scientific_name": "Rubus allegheniensis",
+      "requested_scientific_name": "Rubus allegheniensis",
+      "taxon_id": "usda:RUAL",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 32,
+      "scientific_name": "Rubus idaeus",
+      "requested_scientific_name": "Rubus idaeus",
+      "taxon_id": "usda:RUID",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 33,
+      "scientific_name": "Sambucus nigra",
+      "requested_scientific_name": "Sambucus canadensis",
+      "taxon_id": "usda:SANIC4",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 34,
+      "scientific_name": "Solanum dulcamara",
+      "requested_scientific_name": "Solanum dulcamara",
+      "taxon_id": "usda:SODU",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 35,
+      "scientific_name": "Toxicodendron diversilobum",
+      "requested_scientific_name": "Toxicodendron diversilobum",
+      "taxon_id": "usda:TODI",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 36,
+      "scientific_name": "Toxicodendron radicans",
+      "requested_scientific_name": "Toxicodendron radicans",
+      "taxon_id": "usda:TORA2",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 37,
+      "scientific_name": "Toxicodendron vernix",
+      "requested_scientific_name": "Toxicodendron vernix",
+      "taxon_id": "usda:TOVE",
+      "priority_group": "toxic_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 38,
+      "scientific_name": "Tsuga canadensis",
+      "requested_scientific_name": "Tsuga canadensis",
+      "taxon_id": "usda:TSCA",
+      "priority_group": "common_tree_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 39,
+      "scientific_name": "Typha angustifolia",
+      "requested_scientific_name": "Typha angustifolia",
+      "taxon_id": "usda:TYAN",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 40,
+      "scientific_name": "Typha latifolia",
+      "requested_scientific_name": "Typha latifolia",
+      "taxon_id": "usda:TYLA",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 41,
+      "scientific_name": "Urtica dioica",
+      "requested_scientific_name": "Urtica dioica",
+      "taxon_id": "usda:URDI",
+      "priority_group": "medicinal_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 42,
+      "scientific_name": "Vaccinium angustifolium",
+      "requested_scientific_name": "Vaccinium angustifolium",
+      "taxon_id": "usda:VAAN",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 43,
+      "scientific_name": "Vaccinium corymbosum",
+      "requested_scientific_name": "Vaccinium corymbosum",
+      "taxon_id": "usda:VACO",
+      "priority_group": "foraging_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 44,
+      "scientific_name": "Zigadenus glaberrimus",
+      "requested_scientific_name": "Zigadenus glaberrimus",
+      "taxon_id": "usda:ZIGL",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 45,
+      "scientific_name": "Zigadenus paniculatus",
+      "requested_scientific_name": "Zigadenus paniculatus",
+      "taxon_id": "usda:ZIPA2",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    },
+    {
+      "class_index": 46,
+      "scientific_name": "Zigadenus venenosus",
+      "requested_scientific_name": "Zigadenus venenosus",
+      "taxon_id": "usda:ZIVE",
+      "priority_group": "lookalike_review_candidate",
+      "matched_status": "exact_usda_name_match",
+      "role": "output_class"
+    }
+  ],
+  "scientific_name_to_index": {
+    "Acer rubrum": 0,
+    "Acer saccharum": 1,
+    "Achillea millefolium": 2,
+    "Actaea pachypoda": 3,
+    "Actaea rubra": 4,
+    "Allium canadense": 5,
+    "Allium tricoccum": 6,
+    "Amelanchier alnifolia": 7,
+    "Asimina triloba": 8,
+    "Atropa belladonna": 9,
+    "Betula papyrifera": 10,
+    "Carya ovata": 11,
+    "Cicuta douglasii": 12,
+    "Cicuta maculata": 13,
+    "Conium maculatum": 14,
+    "Daucus carota": 15,
+    "Digitalis purpurea": 16,
+    "Echinacea purpurea": 17,
+    "Fagus grandifolia": 18,
+    "Fragaria virginiana": 19,
+    "Juglans nigra": 20,
+    "Juniperus virginiana": 21,
+    "Liriodendron tulipifera": 22,
+    "Nerium oleander": 23,
+    "Opuntia humifusa": 24,
+    "Phytolacca americana": 25,
+    "Pinus strobus": 26,
+    "Plantago major": 27,
+    "Prunus serotina": 28,
+    "Quercus alba": 29,
+    "Quercus rubra": 30,
+    "Rubus allegheniensis": 31,
+    "Rubus idaeus": 32,
+    "Sambucus nigra": 33,
+    "Solanum dulcamara": 34,
+    "Toxicodendron diversilobum": 35,
+    "Toxicodendron radicans": 36,
+    "Toxicodendron vernix": 37,
+    "Tsuga canadensis": 38,
+    "Typha angustifolia": 39,
+    "Typha latifolia": 40,
+    "Urtica dioica": 41,
+    "Vaccinium angustifolium": 42,
+    "Vaccinium corymbosum": 43,
+    "Zigadenus glaberrimus": 44,
+    "Zigadenus paniculatus": 45,
+    "Zigadenus venenosus": 46
+  }
+}
