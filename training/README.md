@@ -14,7 +14,8 @@ training/
   artifacts/label_map.json
 runpod/
   bootstrap.sh          Pull shards from R2, verify, unpack
-  train.sh                Stage wrapper (smoke/train/calibrate/eval/upload)
+  setup_venv.sh         Create CUDA-safe training venv
+  train.sh              Stage wrapper (smoke/train/calibrate/eval/upload)
 ```
 
 ## RunPod first campaign
@@ -22,16 +23,23 @@ runpod/
 1. Attach a Network Volume (~120 GB) and start a CUDA PyTorch pod.
 2. Clone this repo to `/workspace/pocket-crockett`.
 3. Configure R2 credentials (`cp runpod/env.example .env` and fill in values) and rclone (`runpod/rclone.conf.example`).
-4. Bootstrap output-class shards:
+4. Create the training venv. This reuses the pod image's CUDA PyTorch instead of reinstalling `torch` from pip:
 
 ```bash
 cd /workspace/pocket-crockett
-SHARDS="train-000.tar val-000.tar" ./runpod/bootstrap.sh   # smoke
+./runpod/setup_venv.sh
+```
+
+5. Bootstrap output-class shards:
+
+```bash
+cd /workspace/pocket-crockett
+SHARDS="train-000.tar val-000.tar test-000.tar calibration-000.tar" ./runpod/bootstrap.sh   # smoke workflow
 # or full output set:
 ./runpod/bootstrap.sh
 ```
 
-5. Install deps and run stages:
+6. Run stages:
 
 ```bash
 ./runpod/train.sh smoke
@@ -52,10 +60,11 @@ RUN_NAME=baseline-v1 ./runpod/train.sh upload
 
 ## Local dev (Mac)
 
-Install CPU/torch deps for helper tests and label-map generation:
+Install PyTorch/torchvision for your local platform first, then the support deps for helper tests and label-map generation:
 
 ```bash
 python3 -m venv .venv
+.venv/bin/pip install torch torchvision
 .venv/bin/pip install -r training/requirements.txt
 .venv/bin/python training/scripts/generate_label_map.py
 .venv/bin/python -m unittest training.tests.test_label_map
@@ -79,7 +88,7 @@ After the timm baseline loop works:
 
 ```bash
 INCLUDE_PRETRAINING=1 ./runpod/bootstrap.sh
-.venv/bin/pip install -r training/requirements-bioclip.txt
+INCLUDE_BIOCLIP=1 ./runpod/setup_venv.sh
 ./runpod/train.sh bioclip-pretrain
 CHECKPOINT=/workspace/runs/<pretrain-run>/checkpoint-best.pt RUN_NAME=bioclip-v1 ./runpod/train.sh bioclip-finetune
 ```

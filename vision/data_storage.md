@@ -143,7 +143,8 @@ On a RunPod pod attached to a Network Volume (used as scratch), pull shards from
 ```bash
 cd /workspace/pocket-crockett
 cp runpod/env.example .env   # fill in R2 credentials
-./runpod/bootstrap.sh        # or SHARDS="train-000.tar val-000.tar" for a smoke pull
+./runpod/setup_venv.sh       # reuse the CUDA PyTorch from the RunPod image
+./runpod/bootstrap.sh        # or SHARDS="train-000.tar val-000.tar test-000.tar calibration-000.tar" for a smoke workflow
 ```
 
 The repo script wraps rclone, verifies against `vision/checksums.sha256`, and unpacks tar shards into `/workspace/data`. See [`training/README.md`](../training/README.md) for the full train → calibrate → eval → upload workflow via `./runpod/train.sh`.

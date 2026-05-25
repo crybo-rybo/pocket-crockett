@@ -4,12 +4,19 @@
 set -euo pipefail
 
 ROOT="${ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+if [[ -f "${ROOT}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "${ROOT}/.env"
+  set +a
+fi
+ROOT="${REPO_ROOT:-$ROOT}"
 SHARD_DIR="${SHARD_DIR:-/workspace/shards}"
 DATA_ROOT="${DATA_ROOT:-/workspace/data}"
 CHECKSUMS_FILE="${CHECKSUMS_FILE:-$ROOT/vision/checksums.sha256}"
 R2_REMOTE="${R2_REMOTE:-r2}"
 R2_BUCKET="${R2_BUCKET:-pocket-crockett-vision}"
-R2_PREFIX="${R2_PREFIX:-vision-shards/}"
+R2_PREFIX="${R2_PREFIX:-${R2_SHARD_PREFIX:-vision-shards/}}"
 INCLUDE_PRETRAINING="${INCLUDE_PRETRAINING:-0}"
 SKIP_PULL="${SKIP_PULL:-0}"
 SKIP_UNPACK="${SKIP_UNPACK:-0}"
@@ -33,8 +40,8 @@ Examples:
   # Output-class shards only (first training campaign).
   ./runpod/bootstrap.sh
 
-  # Smoke test: pull and unpack only train-000 and val-000.
-  SHARDS="train-000.tar val-000.tar" ./runpod/bootstrap.sh
+  # Smoke workflow with enough data for train, calibrate, and eval stages.
+  SHARDS="train-000.tar val-000.tar test-000.tar calibration-000.tar" ./runpod/bootstrap.sh
 
   # Include PlantNet pretraining pool for a later campaign.
   INCLUDE_PRETRAINING=1 ./runpod/bootstrap.sh
@@ -64,7 +71,7 @@ else
   fi
 fi
 
-if [[ "$INCLUDE_PRETRAINING" == "1" && -z "${SHARDS:-}" ]]; then
+if [[ "$INCLUDE_PRETRAINING" == "1" ]]; then
   CHECKSUMS_FILES=("$CHECKSUMS_FILE" "$ROOT/vision/checksums_pretraining.sha256")
 else
   CHECKSUMS_FILES=("$CHECKSUMS_FILE")
@@ -88,9 +95,14 @@ ensure_rclone() {
 
 verify_selected_shards() {
   local checksums="$1"
+  shift
+  local shards=("$@")
+  if [[ "${#shards[@]}" -eq 0 ]]; then
+    return
+  fi
   local tmp
   tmp="$(mktemp)"
-  for shard in "${SELECTED_SHARDS[@]}"; do
+  for shard in "${shards[@]}"; do
     grep -F "  shards/$shard" "$checksums" >>"$tmp" || {
       echo "error: $shard not listed in $checksums" >&2
       rm -f "$tmp"
@@ -102,6 +114,38 @@ verify_selected_shards() {
   echo "Verifying shard checksums from $(basename "$checksums")..."
   (cd "$SHARD_DIR" && shasum -a 256 -c "${tmp}.paths")
   rm -f "$tmp" "${tmp}.paths"
+}
+
+verify_all_shards() {
+  local missing=()
+  local checksums
+  for checksums in "${CHECKSUMS_FILES[@]}"; do
+    local matched=()
+    for shard in "${SELECTED_SHARDS[@]}"; do
+      if grep -Fq "  shards/$shard" "$checksums"; then
+        matched+=("$shard")
+      fi
+    done
+    verify_selected_shards "$checksums" "${matched[@]}"
+  done
+
+  for shard in "${SELECTED_SHARDS[@]}"; do
+    local found=0
+    for checksums in "${CHECKSUMS_FILES[@]}"; do
+      if grep -Fq "  shards/$shard" "$checksums"; then
+        found=1
+        break
+      fi
+    done
+    if [[ "$found" != "1" ]]; then
+      missing+=("$shard")
+    fi
+  done
+
+  if [[ "${#missing[@]}" -gt 0 ]]; then
+    echo "error: shard(s) not listed in selected checksum files: ${missing[*]}" >&2
+    exit 2
+  fi
 }
 
 pull_shards() {
@@ -149,8 +193,8 @@ for checksums in "${CHECKSUMS_FILES[@]}"; do
     echo "error: checksums file not found: $checksums" >&2
     exit 2
   fi
-  verify_selected_shards "$checksums"
 done
+verify_all_shards
 
 if [[ "$SKIP_UNPACK" != "1" ]]; then
   unpack_shards

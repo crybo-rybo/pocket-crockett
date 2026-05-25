@@ -88,14 +88,21 @@ def content_type(name: str) -> str:
     return "application/octet-stream"
 
 
+def display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def main() -> int:
+    load_dotenv(DOTENV_PATH)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", type=Path, required=True)
     parser.add_argument("--prefix", default=os.environ.get("R2_CHECKPOINT_PREFIX", DEFAULT_PREFIX))
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    load_dotenv(DOTENV_PATH)
     missing = [v for v in ENV_VARS if not os.environ.get(v)]
     if missing:
         print(f"error: missing env vars: {', '.join(missing)}", file=sys.stderr)
@@ -152,7 +159,7 @@ def main() -> int:
     manifest_path = args.run_dir / "checkpoint_upload_manifest.json"
     if not args.dry_run:
         manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-        print(f"wrote {manifest_path.relative_to(ROOT)}")
+        print(f"wrote {display_path(manifest_path)}")
     if uploaded == 0 and not args.dry_run:
         print("warning: no artifacts uploaded", file=sys.stderr)
         return 1

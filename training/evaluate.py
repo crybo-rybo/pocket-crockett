@@ -29,6 +29,15 @@ from training.models.bioclip_classifier import build_bioclip_classifier
 from training.models.classifier import build_classifier
 
 
+def disable_pretrained_downloads(config: dict) -> dict:
+    """Return a build config that reconstructs architecture without fetching weights."""
+    build_config = dict(config)
+    model_cfg = dict(build_config.get("model", {}))
+    model_cfg["pretrained"] = False
+    build_config["model"] = model_cfg
+    return build_config
+
+
 def load_model_from_run(run_dir: Path, device: torch.device) -> tuple[torch.nn.Module, dict, dict]:
     checkpoint_path = run_dir / "checkpoint-best.pt"
     if not checkpoint_path.exists():
@@ -42,10 +51,11 @@ def load_model_from_run(run_dir: Path, device: torch.device) -> tuple[torch.nn.M
     label_map = load_label_map(label_map_path if label_map_path.exists() else None)
     num_classes = int(label_map["num_classes"])
     model_type = config.get("model", {}).get("type", "timm")
+    build_config = disable_pretrained_downloads(config)
     if model_type == "bioclip":
-        model = build_bioclip_classifier(config, num_classes)
+        model = build_bioclip_classifier(build_config, num_classes)
     else:
-        model = build_classifier(config, num_classes)
+        model = build_classifier(build_config, num_classes)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.to(device)
     model.eval()

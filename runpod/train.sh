@@ -3,6 +3,13 @@
 set -euo pipefail
 
 ROOT="${REPO_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+if [[ -f "${ROOT}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "${ROOT}/.env"
+  set +a
+fi
+ROOT="${REPO_ROOT:-$ROOT}"
 DATA_ROOT="${DATA_ROOT:-/workspace/data}"
 OUTPUT_DIR="${OUTPUT_DIR:-/workspace/runs}"
 STAGE="${1:-train}"
@@ -25,7 +32,10 @@ Environment variables:
   OUTPUT_DIR  Directory for checkpoints and reports
   CONFIG      Override config YAML path for train/smoke stages
   RUN_NAME    Subdirectory under OUTPUT_DIR (default: STAGE timestamp)
-  PYTHON      Python interpreter (default: python3)
+  VENV_DIR    Training venv path (default: /workspace/venvs/pocket-crockett-training)
+  USE_VENV    If 1, use runpod/setup_venv.sh and venv Python (default: 1)
+  REFRESH_VENV If 1, rerun setup even when the venv already exists
+  PYTHON      Fallback Python interpreter when USE_VENV=0 (default: python3)
 
 Examples:
   ./runpod/train.sh smoke
@@ -42,21 +52,27 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 fi
 
 PYTHON="${PYTHON:-python3}"
+USE_VENV="${USE_VENV:-1}"
+REFRESH_VENV="${REFRESH_VENV:-0}"
+VENV_DIR="${VENV_DIR:-/workspace/venvs/pocket-crockett-training}"
 TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_NAME="${RUN_NAME:-${STAGE}-${TIMESTAMP}}"
 RUN_DIR="${OUTPUT_DIR}/${RUN_NAME}"
 TRAINING_DIR="${ROOT}/training"
 
-install_deps() {
-  if [[ -f "${ROOT}/.env" ]]; then
-    set -a
-    # shellcheck disable=SC1090
-    source "${ROOT}/.env"
-    set +a
+setup_python_env() {
+  if [[ "$USE_VENV" == "1" ]]; then
+    local include_bioclip=0
+    case "$STAGE" in
+      bioclip-pretrain|bioclip-finetune) include_bioclip=1 ;;
+      *) ;;
+    esac
+
+    if [[ ! -x "${VENV_DIR}/bin/python" || "$REFRESH_VENV" == "1" || "$include_bioclip" == "1" ]]; then
+      INCLUDE_BIOCLIP="$include_bioclip" VENV_DIR="$VENV_DIR" PYTHON_BIN="$PYTHON" "${ROOT}/runpod/setup_venv.sh"
+    fi
+    PYTHON="${VENV_DIR}/bin/python"
   fi
-  echo "Installing training dependencies..."
-  "$PYTHON" -m pip install --upgrade pip
-  "$PYTHON" -m pip install -r "${TRAINING_DIR}/requirements.txt"
 }
 
 resolve_config() {
@@ -78,7 +94,7 @@ case "$STAGE" in
     ;;
 esac
 
-install_deps
+setup_python_env
 mkdir -p "$RUN_DIR"
 resolve_config
 

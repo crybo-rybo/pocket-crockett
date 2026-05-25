@@ -101,7 +101,7 @@ def train_one_stage(
     freeze_epochs = int(train_cfg.get("freeze_backbone_epochs", 1))
     num_classes = int(label_map["num_classes"])
 
-    if hasattr(model, "freeze_backbone"):
+    if freeze_epochs > 0 and hasattr(model, "freeze_backbone"):
         model.freeze_backbone()
     model.to(device)
 
@@ -111,8 +111,13 @@ def train_one_stage(
         class_weights = compute_class_weights(records, num_classes).to(device)
 
     criterion = nn.CrossEntropyLoss(weight=class_weights)
-    optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, weight_decay=weight_decay)
+
+    def make_optimizer() -> torch.optim.Optimizer:
+        return AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=lr, weight_decay=weight_decay)
+
+    optimizer = make_optimizer()
     scheduler = CosineAnnealingLR(optimizer, T_max=max(epochs, 1))
+    backbone_unfrozen = freeze_epochs <= 0 or not hasattr(model, "unfreeze_all")
 
     best_metric = -1.0
     best_path = output_dir / "checkpoint-best.pt"
@@ -120,9 +125,11 @@ def train_one_stage(
     history: list[dict] = []
 
     for epoch in range(1, epochs + 1):
-        if epoch > freeze_epochs and hasattr(model, "unfreeze_all"):
+        if not backbone_unfrozen and epoch > freeze_epochs:
             model.unfreeze_all()
-            optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
+            optimizer = make_optimizer()
+            scheduler = CosineAnnealingLR(optimizer, T_max=max(epochs - epoch + 1, 1))
+            backbone_unfrozen = True
 
         model.train()
         running_loss = 0.0
