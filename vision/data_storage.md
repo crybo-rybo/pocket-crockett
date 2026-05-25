@@ -138,11 +138,22 @@ After a successful full upload and checksum verification, local tar files under 
 
 ## Training-day pull (RunPod)
 
-On a RunPod pod attached to a Network Volume (used as scratch), pull shards from R2 directly:
+On a RunPod pod attached to a Network Volume (used as scratch), pull shards from R2, verify checksums, and unpack once:
+
+```bash
+cd /workspace/pocket-crockett
+cp runpod/env.example .env   # fill in R2 credentials
+./runpod/setup_venv.sh       # reuse the CUDA PyTorch from the RunPod image
+./runpod/bootstrap.sh        # or SHARDS="train-000.tar val-000.tar test-000.tar calibration-000.tar" for a smoke workflow
+```
+
+The repo script wraps rclone, verifies against `vision/checksums.sha256`, and unpacks tar shards into `/workspace/data`. See [`training/README.md`](../training/README.md) for the full train → calibrate → eval → upload workflow via `./runpod/train.sh`.
+
+Manual rclone pull (equivalent first step):
 
 ```bash
 rclone config  # one-time: add an S3-compatible remote pointing at R2
 rclone copy r2:pocket-crockett-vision/vision-shards/ /workspace/shards --progress --checksum
 ```
 
-The `--checksum` flag tells rclone to verify against the SHA-256 R2 has on file. After the campaign, delete the Network Volume; the bucket remains the durable copy (idle storage ~$0.25/mo).
+The `--checksum` flag tells rclone to verify against the SHA-256 R2 has on file. After the campaign, upload checkpoints with `tools/upload_checkpoints_to_r2.py` (prefix `model-checkpoints/`), then delete the Network Volume; the bucket remains the durable copy (idle storage ~$0.25/mo).

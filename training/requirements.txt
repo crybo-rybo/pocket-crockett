@@ -1,0 +1,9 @@
+# CUDA-sensitive PyTorch packages are intentionally not listed here.
+# On RunPod, use a CUDA PyTorch image and run runpod/setup_venv.sh, which
+# creates a venv that reuses the image's torch/torchvision via system site packages.
+timm>=1.0.8
+albumentations>=1.4.0
+PyYAML>=6.0
+tqdm>=4.66
+Pillow>=10.0
+boto3>=1.34

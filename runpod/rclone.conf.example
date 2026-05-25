@@ -1,0 +1,12 @@
+# Copy relevant lines into ~/.config/rclone/rclone.conf after filling in credentials.
+# Generate an R2 API token with read access to the vision bucket.
+#
+#   rclone config  # interactive setup, or paste this block manually
+
+[r2]
+type = s3
+provider = Cloudflare
+access_key_id = YOUR_R2_ACCESS_KEY_ID
+secret_access_key = YOUR_R2_SECRET_ACCESS_KEY
+endpoint = https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
+acl = private
