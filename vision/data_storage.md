@@ -14,7 +14,7 @@ Default shard groups:
 - `calibration-*.tar`
 - `heldaside-*.tar`
 
-The `pretraining_only` PlantNet pool is intentionally not part of the closed-set output splits. It can be sharded separately with `--include-pretraining` when there is enough local space or when writing directly to external storage.
+The `pretraining_only` PlantNet pool is intentionally not part of the closed-set output splits. It is stored as its own `pretraining-*.tar` shard set with separate checksum files.
 
 Current local shard set:
 
@@ -24,7 +24,20 @@ Current local shard set:
 - `calibration-000.tar`
 - `heldaside-000.tar`
 
-These 8 shards cover the final output-class training/evaluation data plus the held-aside over-cap pool. The PlantNet `pretraining_only` pool is described by `vision/backbone/pretraining_only_taxa.csv` and remains unsharded locally in this pass because it requires another ~38 GiB of tar output space.
+These 8 shards cover the final output-class training/evaluation data plus the held-aside over-cap pool. Their committed metadata is:
+
+- `vision/shards_manifest.csv`
+- `vision/checksums.sha256`
+
+The pretraining-only shard set is:
+
+- `pretraining-000.tar` through `pretraining-009.tar`
+
+Its committed metadata is:
+
+- `vision/shards_manifest_pretraining.csv`
+- `vision/checksums_pretraining.sha256`
+- `vision/upload_manifest_pretraining.sha256` if uploading under the same `vision-shards/` object prefix as the output-class shards
 
 ## Generate Shards
 
@@ -47,7 +60,12 @@ gzip -dc vision/images/manifest.csv.gz > vision/images/manifest.csv
 To include the pretraining-only PlantNet pool as additional shards:
 
 ```bash
-python3 tools/shard_vision_dataset.py --max-shard-gib 4 --include-pretraining
+python3 tools/shard_vision_dataset.py \
+  --max-shard-gib 4 \
+  --include-pretraining \
+  --splits pretraining \
+  --manifest-path vision/shards_manifest_pretraining.csv \
+  --checksums-path vision/checksums_pretraining.sha256
 ```
 
 ## Verify Shards

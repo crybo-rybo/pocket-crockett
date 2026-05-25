@@ -77,11 +77,14 @@ def tar_add_json(tar: tarfile.TarFile, arcname: str, data: object) -> int:
     return len(payload)
 
 
-def load_items(include_pretraining: bool) -> dict[str, list[ShardItem]]:
+def load_items(include_pretraining: bool, selected_groups: set[str] | None = None) -> dict[str, list[ShardItem]]:
     by_id = {r["image_id"]: r for r in read_csv(IMAGE_MANIFEST)}
-    groups: dict[str, list[ShardItem]] = {name: [] for name in SPLIT_NAMES}
+    groups: dict[str, list[ShardItem]] = {}
 
     for split in SPLIT_NAMES:
+        if selected_groups is not None and split not in selected_groups:
+            continue
+        groups[split] = []
         for row in read_csv(VISION / "splits" / f"{split}.csv"):
             manifest_row = by_id[row["image_id"]]
             path = manifest_row["path"]
@@ -100,26 +103,27 @@ def load_items(include_pretraining: bool) -> dict[str, list[ShardItem]]:
                 )
             )
 
-    held = []
-    for row in read_csv(VISION / "splits" / "held_aside_pool.csv"):
-        manifest_row = by_id[row["image_id"]]
-        file_path = VISION / manifest_row["path"]
-        held.append(
-            ShardItem(
-                image_id=row["image_id"],
-                path=manifest_row["path"],
-                split="heldaside",
-                scientific_name=row.get("scientific_name") or manifest_row.get("scientific_name", ""),
-                taxon_id=row.get("taxon_id") or manifest_row.get("taxon_id", ""),
-                license=manifest_row.get("license", ""),
-                dataset=manifest_row.get("dataset", ""),
-                source_url=manifest_row.get("source_url", ""),
-                bytes=file_path.stat().st_size,
+    if selected_groups is None or "heldaside" in selected_groups:
+        held = []
+        for row in read_csv(VISION / "splits" / "held_aside_pool.csv"):
+            manifest_row = by_id[row["image_id"]]
+            file_path = VISION / manifest_row["path"]
+            held.append(
+                ShardItem(
+                    image_id=row["image_id"],
+                    path=manifest_row["path"],
+                    split="heldaside",
+                    scientific_name=row.get("scientific_name") or manifest_row.get("scientific_name", ""),
+                    taxon_id=row.get("taxon_id") or manifest_row.get("taxon_id", ""),
+                    license=manifest_row.get("license", ""),
+                    dataset=manifest_row.get("dataset", ""),
+                    source_url=manifest_row.get("source_url", ""),
+                    bytes=file_path.stat().st_size,
+                )
             )
-        )
-    groups["heldaside"] = held
+        groups["heldaside"] = held
 
-    if include_pretraining:
+    if include_pretraining and (selected_groups is None or "pretraining" in selected_groups):
         pretraining = []
         for manifest_row in by_id.values():
             if manifest_row.get("split") != "pretraining_only":
@@ -199,13 +203,15 @@ def shard_items(items: list[ShardItem], max_bytes: int) -> list[list[ShardItem]]
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=SHARDS_DIR)
+    parser.add_argument("--checksums-path", type=Path, default=CHECKSUMS)
+    parser.add_argument("--manifest-path", type=Path, default=SHARD_MANIFEST)
     parser.add_argument("--max-shard-gib", type=float, default=4.0)
     parser.add_argument("--include-pretraining", action="store_true")
     parser.add_argument("--splits", nargs="*", help="Optional subset of groups to shard.")
     args = parser.parse_args()
 
     max_bytes = int(args.max_shard_gib * (1024**3))
-    groups = load_items(args.include_pretraining)
+    groups = load_items(args.include_pretraining, set(args.splits) if args.splits else None)
     selected_groups = args.splits or list(groups)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -218,11 +224,11 @@ def main() -> None:
             shard_rows.append(write_shard(split, index, chunk, args.output_dir))
 
     write_csv(
-        SHARD_MANIFEST,
+        args.manifest_path,
         ["shard", "split", "index", "image_count", "bytes", "sha256"],
         shard_rows,
     )
-    CHECKSUMS.write_text(
+    args.checksums_path.write_text(
         "".join(f"{row['sha256']}  shards/{row['shard']}\n" for row in shard_rows),
         encoding="utf-8",
     )
