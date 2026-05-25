@@ -4,8 +4,9 @@
 Reads ``vision/shards_manifest.csv`` (source of truth for shard SHA-256s),
 uploads each shard to R2 with a pre-computed SHA-256 at the storage layer,
 and verifies the server-side checksum after upload. Idempotent: shards
-that already exist in R2 with the expected SHA-256 are skipped, so an
-interrupted run can simply be re-invoked.
+that already exist in R2 with the expected SHA-256 are skipped before the
+local tar file is required, so older uploaded shards can be deleted locally
+while their rows remain in the committed manifest.
 
 Credentials are read from environment variables — either exported in
 your shell or written to a ``.env`` file at the repo root (gitignored):
@@ -31,8 +32,8 @@ Typical use:
 
 Outputs:
 
-    vision/upload_manifest.json   transient run record (gitignored)
-    vision/upload_manifest.sha256 durable, committable per-key SHA-256 list
+    vision/upload_manifest.json   generated run record (gitignored)
+    vision/upload_manifest.sha256 generated per-key SHA-256 list (gitignored)
 """
 
 from __future__ import annotations
@@ -224,12 +225,6 @@ def main() -> int:
         key = f"{args.prefix}{shard.name}"
         record = {"shard": shard.name, "key": key, "sha256": shard.sha256_hex, "bytes": shard.bytes}
 
-        if not shard.local_path.exists():
-            print(f"skip   {shard.name}: not present locally at {shard.local_path}")
-            results.append({**record, "status": "missing_local"})
-            failures += 1
-            continue
-
         existing = remote_sha256(client, bucket, key)
         if existing == shard.sha256_hex:
             print(f"present {shard.name} -> s3://{bucket}/{key}")
@@ -237,6 +232,15 @@ def main() -> int:
             continue
         if existing not in (None, ""):
             print(f"mismatch {shard.name}: remote={existing} expected={shard.sha256_hex} — will re-upload")
+
+        if not shard.local_path.exists():
+            if existing == "":
+                print(f"skip   {shard.name}: remote object exists without checksum and local file is absent at {shard.local_path}")
+            else:
+                print(f"skip   {shard.name}: not present locally at {shard.local_path}")
+            results.append({**record, "status": "missing_local"})
+            failures += 1
+            continue
 
         if args.dry_run:
             print(f"plan   {shard.name} -> s3://{bucket}/{key} ({shard.bytes / 1e9:.2f} GB)")

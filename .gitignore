@@ -10,9 +10,10 @@ vision/shards/
 *.tar.tmp
 vision/sources/plantnet300k-v2/images.zip
 
-# Transient R2 upload run record. The durable, committable record is
-# vision/upload_manifest.sha256.
+# Generated R2 upload records. The committed source of truth is
+# vision/shards_manifest.csv plus the checksum files under vision/.
 vision/upload_manifest.json
+vision/upload_manifest*.sha256
 
 # Local credentials. `.env.example` is the committed template.
 .env
