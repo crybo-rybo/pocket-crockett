@@ -171,7 +171,7 @@ unpack_shards() {
       exit 2
     fi
     echo "Unpacking ${shard} -> ${DATA_ROOT}"
-    tar -xf "$tar_path" -C "$DATA_ROOT" --exclude manifest.json
+    tar --no-same-owner --no-same-permissions -xf "$tar_path" -C "$DATA_ROOT" --exclude manifest.json
   done
 }
 
