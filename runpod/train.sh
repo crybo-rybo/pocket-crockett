@@ -43,6 +43,8 @@ Examples:
   RUN_NAME=baseline-v1 ./runpod/train.sh calibrate
   RUN_NAME=baseline-v1 ./runpod/train.sh eval
   RUN_NAME=baseline-v1 ./runpod/train.sh upload
+  RUN_NAME=bioclip-direct-v2 ./runpod/train.sh bioclip-finetune
+  PRETRAIN_CHECKPOINT=/workspace/runs/bioclip-pretrain-v2/checkpoint-best.pt RUN_NAME=bioclip-v2 ./runpod/train.sh bioclip-finetune
 EOF
 }
 
@@ -118,16 +120,19 @@ case "$STAGE" in
     ;;
   bioclip-finetune)
     PRETRAIN_CHECKPOINT="${PRETRAIN_CHECKPOINT:-${CHECKPOINT:-}}"
-    if [[ -z "$PRETRAIN_CHECKPOINT" ]]; then
-      echo "error: set PRETRAIN_CHECKPOINT to the bioclip-pretrain checkpoint-best.pt path" >&2
-      exit 2
+    CMD=(
+      "$PYTHON" "${TRAINING_DIR}/train.py"
+      --config "$CONFIG"
+      --data-root "$DATA_ROOT"
+      --output-dir "$RUN_DIR"
+      --stage finetune
+    )
+    if [[ -n "$PRETRAIN_CHECKPOINT" ]]; then
+      CMD+=(--checkpoint "$PRETRAIN_CHECKPOINT")
+    else
+      echo "No PRETRAIN_CHECKPOINT set; fine-tuning from the base BioCLIP weights."
     fi
-    "$PYTHON" "${TRAINING_DIR}/train.py" \
-      --config "$CONFIG" \
-      --data-root "$DATA_ROOT" \
-      --output-dir "$RUN_DIR" \
-      --stage finetune \
-      --checkpoint "$PRETRAIN_CHECKPOINT"
+    "${CMD[@]}"
     ;;
   calibrate)
     "$PYTHON" "${TRAINING_DIR}/calibrate.py" \

@@ -7,6 +7,7 @@ import argparse
 import json
 import sys
 import time
+from collections import defaultdict
 from pathlib import Path
 
 import torch
@@ -81,6 +82,40 @@ def resolve_training_config(config: dict, stage: str) -> dict:
     if isinstance(nested, dict):
         training.update(nested)
     return training
+
+
+def stratified_holdout(
+    records,
+    *,
+    fraction: float = 0.01,
+) -> tuple[list, list]:
+    by_label: dict[int, list] = defaultdict(list)
+    for record in records:
+        by_label[record.label].append(record)
+
+    train_records = []
+    val_records = []
+    for label in sorted(by_label):
+        group = sorted(by_label[label], key=lambda r: r.image_id)
+        if len(group) < 2:
+            train_records.extend(group)
+            continue
+        val_count = max(1, int(round(len(group) * fraction)))
+        val_count = min(val_count, len(group) - 1)
+        val_records.extend(group[:val_count])
+        train_records.extend(group[val_count:])
+    return train_records, val_records
+
+
+def load_matching_checkpoint_weights(model: torch.nn.Module, checkpoint_path: Path) -> dict[str, int]:
+    state = torch.load(checkpoint_path, map_location="cpu")
+    current = model.state_dict()
+    loaded = state["model_state_dict"]
+    filtered = {k: v for k, v in loaded.items() if k in current and current[k].shape == v.shape}
+    skipped = len(loaded) - len(filtered)
+    current.update(filtered)
+    model.load_state_dict(current)
+    return {"loaded_tensors": len(filtered), "skipped_tensors": skipped}
 
 
 def train_one_stage(
@@ -214,8 +249,15 @@ def main() -> None:
     if args.stage == "pretrain":
         records, species_map = load_pretraining_records(args.data_root)
         num_classes = len(species_map)
-        val_records = records[: max(len(records) // 100, 1)]
-        train_records = records[len(val_records) :]
+        train_records, val_records = stratified_holdout(
+            records,
+            fraction=float(data_cfg.get("pretrain_val_fraction", 0.01)),
+        )
+        if not train_records:
+            raise SystemExit(f"No pretraining records found under {args.data_root}. Did bootstrap unpack pretraining shards?")
+        if not val_records:
+            raise SystemExit("No pretraining validation records found; increase data.pretrain_val_fraction or add more data.")
+        print(json.dumps({"stage": "pretrain", "train_records": len(train_records), "val_records": len(val_records)}))
         label_map = {
             "num_classes": num_classes,
             "source": "pretraining_only manifest",
@@ -237,6 +279,7 @@ def main() -> None:
             num_workers=num_workers,
             shuffle=True,
             weighted_sampler=bool(data_cfg.get("weighted_sampler", True)),
+            data_config=data_cfg,
         )
         val_loader = build_dataloader(
             val_records,
@@ -247,6 +290,7 @@ def main() -> None:
             num_workers=num_workers,
             shuffle=False,
             weighted_sampler=False,
+            data_config=data_cfg,
         )
         best = train_one_stage(
             model=model,
@@ -283,13 +327,7 @@ def main() -> None:
     if model_type == "bioclip":
         model = build_bioclip_classifier(config, label_map["num_classes"])
         if args.checkpoint:
-            state = torch.load(args.checkpoint, map_location="cpu")
-            current = model.state_dict()
-            loaded = state["model_state_dict"]
-            filtered = {k: v for k, v in loaded.items() if k in current and current[k].shape == v.shape}
-            current.update(filtered)
-            model.load_state_dict(current)
-            model.replace_head(label_map["num_classes"])
+            print(json.dumps({"checkpoint": str(args.checkpoint), **load_matching_checkpoint_weights(model, args.checkpoint)}))
     else:
         model = build_classifier(config, label_map["num_classes"])
 
@@ -302,6 +340,7 @@ def main() -> None:
         num_workers=num_workers,
         shuffle=True,
         weighted_sampler=bool(data_cfg.get("weighted_sampler", True)),
+        data_config=data_cfg,
     )
     val_loader = build_dataloader(
         val_records,
@@ -312,6 +351,7 @@ def main() -> None:
         num_workers=num_workers,
         shuffle=False,
         weighted_sampler=False,
+        data_config=data_cfg,
     )
 
     best = train_one_stage(

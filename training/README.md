@@ -84,13 +84,25 @@ If you still have unpacked images under `vision/images/raw/`, you can point `--d
 
 ## BioCLIP upgrade track
 
-After the timm baseline loop works:
+BioCLIP uses CLIP-style image normalization (`normalization: openai_clip`) and normalized image embeddings. Before spending another full pretraining run, first run a direct 47-class BioCLIP fine-tune from the base BioCLIP weights:
+
+```bash
+INCLUDE_BIOCLIP=1 ./runpod/setup_venv.sh
+RUN_NAME=bioclip-direct-v2 ./runpod/train.sh bioclip-finetune
+RUN_NAME=bioclip-direct-v2 ./runpod/train.sh calibrate
+RUN_NAME=bioclip-direct-v2 ./runpod/train.sh eval
+RUN_NAME=bioclip-direct-v2 ./runpod/train.sh upload
+```
+
+If direct BioCLIP is competitive, rerun the two-stage path:
 
 ```bash
 INCLUDE_PRETRAINING=1 ./runpod/bootstrap.sh
-INCLUDE_BIOCLIP=1 ./runpod/setup_venv.sh
-./runpod/train.sh bioclip-pretrain
-CHECKPOINT=/workspace/runs/<pretrain-run>/checkpoint-best.pt RUN_NAME=bioclip-v1 ./runpod/train.sh bioclip-finetune
+RUN_NAME=bioclip-pretrain-v2 ./runpod/train.sh bioclip-pretrain
+CHECKPOINT=/workspace/runs/bioclip-pretrain-v2/checkpoint-best.pt RUN_NAME=bioclip-v2 ./runpod/train.sh bioclip-finetune
+RUN_NAME=bioclip-v2 ./runpod/train.sh calibrate
+RUN_NAME=bioclip-v2 ./runpod/train.sh eval
+RUN_NAME=bioclip-v2 ./runpod/train.sh upload
 ```
 
 ## Artifacts

@@ -10,6 +10,7 @@ from typing import Any
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class BioClipClassifier(nn.Module):
@@ -20,6 +21,7 @@ class BioClipClassifier(nn.Module):
         model_name: str = "hf-hub:imageomics/bioclip",
         pretrained: bool = True,
         drop_rate: float = 0.1,
+        normalize_features: bool = True,
     ) -> None:
         super().__init__()
         try:
@@ -31,6 +33,7 @@ class BioClipClassifier(nn.Module):
             ) from exc
 
         self.model_name = model_name
+        self.normalize_features = normalize_features
         self.backbone, _, self.preprocess = open_clip.create_model_and_transforms(
             model_name,
             pretrained=pretrained,
@@ -43,6 +46,8 @@ class BioClipClassifier(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         features = self.backbone.encode_image(x)
+        if self.normalize_features:
+            features = F.normalize(features, dim=-1)
         return self.head(features)
 
     def replace_head(self, num_classes: int, *, drop_rate: float = 0.1) -> None:
@@ -68,4 +73,5 @@ def build_bioclip_classifier(config: dict[str, Any], num_classes: int) -> BioCli
         model_name=model_cfg.get("bioclip_name", "hf-hub:imageomics/bioclip"),
         pretrained=bool(model_cfg.get("pretrained", True)),
         drop_rate=float(model_cfg.get("drop_rate", 0.1)),
+        normalize_features=bool(model_cfg.get("normalize_features", True)),
     )

@@ -9,6 +9,7 @@ data:
   batch_size: 16
   num_workers: 2
   weighted_sampler: true
+  normalization: imagenet
   max_train_samples: 256
   max_val_samples: 64
 

@@ -16,6 +16,16 @@ from training.common.label_map import load_label_map, scientific_name_to_index
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SPLITS_DIR = ROOT / "vision" / "splits"
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
+OPENAI_CLIP_MEAN = (0.48145466, 0.4578275, 0.40821073)
+OPENAI_CLIP_STD = (0.26862954, 0.26130258, 0.27577711)
+NORMALIZATION_PRESETS = {
+    "imagenet": (IMAGENET_MEAN, IMAGENET_STD),
+    "openai_clip": (OPENAI_CLIP_MEAN, OPENAI_CLIP_STD),
+    "clip": (OPENAI_CLIP_MEAN, OPENAI_CLIP_STD),
+    "bioclip": (OPENAI_CLIP_MEAN, OPENAI_CLIP_STD),
+}
 
 
 @dataclass(frozen=True)
@@ -70,15 +80,56 @@ def load_split_records(
     return records
 
 
-def build_transforms(image_size: int, augment: bool) -> transforms.Compose:
+def _float_tuple(value, *, name: str, length: int = 3) -> tuple[float, ...]:
+    if not isinstance(value, (list, tuple)) or len(value) != length:
+        raise ValueError(f"{name} must be a sequence of {length} numbers")
+    return tuple(float(v) for v in value)
+
+
+def resolve_normalization(data_config: dict | None = None) -> tuple[tuple[float, ...], tuple[float, ...]]:
+    data_config = data_config or {}
+    if "mean" in data_config or "std" in data_config:
+        if "mean" not in data_config or "std" not in data_config:
+            raise ValueError("data.mean and data.std must be set together")
+        return (
+            _float_tuple(data_config["mean"], name="data.mean"),
+            _float_tuple(data_config["std"], name="data.std"),
+        )
+
+    preset = str(data_config.get("normalization", "imagenet")).lower()
+    if preset not in NORMALIZATION_PRESETS:
+        known = ", ".join(sorted(NORMALIZATION_PRESETS))
+        raise ValueError(f"Unknown normalization preset {preset!r}; expected one of: {known}")
+    return NORMALIZATION_PRESETS[preset]
+
+
+def resolve_crop_scale(data_config: dict | None = None) -> tuple[float, float]:
+    data_config = data_config or {}
+    value = data_config.get("random_resized_crop_scale", (0.8, 1.0))
+    if not isinstance(value, (list, tuple)) or len(value) != 2:
+        raise ValueError("data.random_resized_crop_scale must be a pair of numbers")
+    lo, hi = (float(value[0]), float(value[1]))
+    if not 0 < lo <= hi <= 1:
+        raise ValueError("data.random_resized_crop_scale must satisfy 0 < min <= max <= 1")
+    return lo, hi
+
+
+def build_transforms(
+    image_size: int,
+    augment: bool,
+    *,
+    mean: tuple[float, ...] = IMAGENET_MEAN,
+    std: tuple[float, ...] = IMAGENET_STD,
+    random_resized_crop_scale: tuple[float, float] = (0.8, 1.0),
+) -> transforms.Compose:
     if augment:
         return transforms.Compose(
             [
-                transforms.RandomResizedCrop(image_size, scale=(0.8, 1.0)),
+                transforms.RandomResizedCrop(image_size, scale=random_resized_crop_scale),
                 transforms.RandomHorizontalFlip(p=0.5),
                 transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.02),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+                transforms.Normalize(mean=mean, std=std),
             ]
         )
     return transforms.Compose(
@@ -86,7 +137,7 @@ def build_transforms(image_size: int, augment: bool) -> transforms.Compose:
             transforms.Resize(int(image_size * 1.14)),
             transforms.CenterCrop(image_size),
             transforms.ToTensor(),
-            transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+            transforms.Normalize(mean=mean, std=std),
         ]
     )
 
@@ -193,8 +244,16 @@ def build_dataloader(
     shuffle: bool,
     weighted_sampler: bool,
     drop_last: bool = False,
+    data_config: dict | None = None,
 ) -> DataLoader:
-    transform = build_transforms(image_size, augment=augment)
+    mean, std = resolve_normalization(data_config)
+    transform = build_transforms(
+        image_size,
+        augment=augment,
+        mean=mean,
+        std=std,
+        random_resized_crop_scale=resolve_crop_scale(data_config),
+    )
     dataset = FolderDataset(records, data_root, transform)
     sampler = None
     if weighted_sampler and shuffle:

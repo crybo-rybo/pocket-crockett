@@ -3,12 +3,16 @@ model:
   bioclip_name: hf-hub:imageomics/bioclip
   pretrained: true
   drop_rate: 0.1
+  normalize_features: true
 
 data:
   image_size: 224
   batch_size: 32
   num_workers: 4
   weighted_sampler: true
+  normalization: openai_clip
+  random_resized_crop_scale: [0.8, 1.0]
+  pretrain_val_fraction: 0.01
 
 training:
   pretrain:
@@ -24,6 +28,7 @@ training:
     freeze_backbone_epochs: 2
     weighted_loss: true
 
-# Stage A (pretrain): ./runpod/train.sh bioclip-pretrain
+# Direct BioCLIP smoke/diagnostic: RUN_NAME=bioclip-direct-v2 ./runpod/train.sh bioclip-finetune
+# Stage A (pretrain): RUN_NAME=bioclip-pretrain-v2 ./runpod/train.sh bioclip-pretrain
 # Requires INCLUDE_PRETRAINING=1 bootstrap and open-clip-torch installed.
-# Stage B (finetune): CHECKPOINT=/workspace/runs/<pretrain-run>/checkpoint-best.pt ./runpod/train.sh bioclip-finetune
+# Stage B (finetune): CHECKPOINT=/workspace/runs/bioclip-pretrain-v2/checkpoint-best.pt RUN_NAME=bioclip-v2 ./runpod/train.sh bioclip-finetune

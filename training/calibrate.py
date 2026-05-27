@@ -51,6 +51,7 @@ def main() -> None:
         num_workers=num_workers,
         shuffle=False,
         weighted_sampler=False,
+        data_config=data_cfg,
     )
     logits, labels = collect_logits(model, loader, device)
     temperature = fit_temperature(logits, labels)
