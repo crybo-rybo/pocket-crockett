@@ -20,3 +20,7 @@ vision/upload_manifest*.sha256
 
 # Project-local virtualenv. See README "Local setup" for the activate flow.
 .venv/
+
+# Agent files
+AGENTS.md
+CLAUDE.md
