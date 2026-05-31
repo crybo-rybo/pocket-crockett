@@ -30,6 +30,19 @@ class SpeciesClassifier(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.backbone(x)
 
+    def features(self, x: torch.Tensor) -> torch.Tensor:
+        feats = self.backbone.forward_features(x)
+        if isinstance(feats, (list, tuple)):
+            feats = feats[-1]
+        if hasattr(self.backbone, "forward_head"):
+            try:
+                feats = self.backbone.forward_head(feats, pre_logits=True)
+            except TypeError:
+                pass
+        if feats.ndim > 2:
+            feats = feats.mean(dim=tuple(range(2, feats.ndim)))
+        return feats
+
     def freeze_backbone(self) -> None:
         for name, param in self.backbone.named_parameters():
             if not name.startswith("head") and not name.startswith("classifier") and "fc" not in name.split(".")[-1]:

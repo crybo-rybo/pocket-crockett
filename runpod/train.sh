@@ -14,6 +14,7 @@ DATA_ROOT="${DATA_ROOT:-/workspace/data}"
 OUTPUT_DIR="${OUTPUT_DIR:-/workspace/runs}"
 STAGE="${1:-train}"
 CONFIG="${CONFIG:-}"
+SPLITS_DIR="${SPLITS_DIR:-${ROOT}/vision/splits}"
 
 usage() {
   cat <<'EOF'
@@ -23,6 +24,7 @@ Stages:
   smoke      Short run using training/configs/smoke_test.yaml
   train      Full baseline fine-tune (training/configs/baseline_convnext_tiny.yaml)
   calibrate  Fit temperature scaling on the calibration split
+  ood        Fit embedding-distance OOD guard after calibration
   eval       Evaluate best checkpoint on val/test splits
   upload     Upload run artifacts from OUTPUT_DIR/run to R2
 
@@ -30,8 +32,10 @@ Environment variables:
   REPO_ROOT   Path to cloned pocket-crockett repo (default: parent of runpod/)
   DATA_ROOT   Unpacked dataset root from bootstrap.sh
   OUTPUT_DIR  Directory for checkpoints and reports
+  SPLITS_DIR   Split CSV directory (default: $REPO_ROOT/vision/splits)
   CONFIG      Override config YAML path for train/smoke stages
   RUN_NAME    Subdirectory under OUTPUT_DIR (default: STAGE timestamp)
+  OOD_NEGATIVES_CSV Optional CSV of extra OOD validation negatives
   VENV_DIR    Training venv path (default: /workspace/venvs/pocket-crockett-training)
   USE_VENV    If 1, use runpod/setup_venv.sh and venv Python (default: 1)
   REFRESH_VENV If 1, rerun setup even when the venv already exists
@@ -41,6 +45,7 @@ Examples:
   ./runpod/train.sh smoke
   RUN_NAME=baseline-v1 ./runpod/train.sh train
   RUN_NAME=baseline-v1 ./runpod/train.sh calibrate
+  RUN_NAME=baseline-v1 ./runpod/train.sh ood
   RUN_NAME=baseline-v1 ./runpod/train.sh eval
   RUN_NAME=baseline-v1 ./runpod/train.sh upload
 EOF
@@ -62,9 +67,14 @@ TRAINING_DIR="${ROOT}/training"
 
 setup_python_env() {
   if [[ "$USE_VENV" == "1" ]]; then
-    local include_bioclip=0
+    local include_bioclip="${INCLUDE_BIOCLIP:-0}"
     case "$STAGE" in
       bioclip-pretrain|bioclip-finetune) include_bioclip=1 ;;
+      ood)
+        if [[ -f "${RUN_DIR}/config.resolved.json" ]] && grep -q '"type": "bioclip"' "${RUN_DIR}/config.resolved.json"; then
+          include_bioclip=1
+        fi
+        ;;
       *) ;;
     esac
 
@@ -86,7 +96,7 @@ resolve_config() {
 }
 
 case "$STAGE" in
-  smoke|train|calibrate|eval|upload|bioclip-pretrain|bioclip-finetune) ;;
+  smoke|train|calibrate|ood|eval|upload|bioclip-pretrain|bioclip-finetune) ;;
   *)
     echo "error: unknown stage: $STAGE" >&2
     usage
@@ -132,12 +142,26 @@ case "$STAGE" in
   calibrate)
     "$PYTHON" "${TRAINING_DIR}/calibrate.py" \
       --run-dir "$RUN_DIR" \
+      --data-root "$DATA_ROOT" \
+      --splits-dir "$SPLITS_DIR"
+    ;;
+  ood)
+    ood_args=(
+      fit
+      --run-dir "$RUN_DIR"
       --data-root "$DATA_ROOT"
+      --splits-dir "$SPLITS_DIR"
+    )
+    if [[ -n "${OOD_NEGATIVES_CSV:-}" ]]; then
+      ood_args+=(--ood-negatives-csv "$OOD_NEGATIVES_CSV")
+    fi
+    "$PYTHON" "${TRAINING_DIR}/ood.py" "${ood_args[@]}"
     ;;
   eval)
     "$PYTHON" "${TRAINING_DIR}/evaluate.py" \
       --run-dir "$RUN_DIR" \
       --data-root "$DATA_ROOT" \
+      --splits-dir "$SPLITS_DIR" \
       --splits val test
     ;;
   upload)

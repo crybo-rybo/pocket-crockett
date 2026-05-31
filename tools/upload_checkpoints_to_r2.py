@@ -24,6 +24,8 @@ UPLOAD_NAMES = (
     "checkpoint-best.pt",
     "checkpoint-last.pt",
     "calibration.json",
+    "ood.json",
+    "ood_stats.pt",
     "eval_report.json",
     "eval_report.md",
     "label_map.json",

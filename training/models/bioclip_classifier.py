@@ -41,9 +41,11 @@ class BioClipClassifier(nn.Module):
             nn.Linear(embed_dim, num_classes),
         )
 
+    def features(self, x: torch.Tensor) -> torch.Tensor:
+        return self.backbone.encode_image(x)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        features = self.backbone.encode_image(x)
-        return self.head(features)
+        return self.head(self.features(x))
 
     def replace_head(self, num_classes: int, *, drop_rate: float = 0.1) -> None:
         embed_dim = self.head[-1].in_features
