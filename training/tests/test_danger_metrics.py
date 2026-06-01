@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from training.common.metrics import lookalike_confusion
+from tools.vision_pipeline import LOOKALIKE_EDGE_SEEDS
 
 
 def logits_from_probs(rows: list[list[float]]) -> torch.Tensor:
@@ -100,25 +101,41 @@ class DangerMetricsTests(unittest.TestCase):
         path = ROOT / "vision" / "safety" / "danger_edges.csv"
         with path.open(encoding="utf-8", newline="") as f:
             rows = list(csv.DictReader(f))
+        with (ROOT / "vision" / "splits" / "output_classes.csv").open(encoding="utf-8-sig", newline="") as f:
+            output_classes = {row["scientific_name"] for row in csv.DictReader(f)}
 
         self.assertEqual(
             set(rows[0]),
             {"source_species", "target_species", "source_role", "target_role", "gate_budget"},
         )
-        self.assertEqual(len(rows), 9)
         self.assertEqual({row["source_role"] for row in rows}, {"dangerous"})
         self.assertEqual({row["target_role"] for row in rows}, {"foraging_twin"})
         self.assertEqual({row["gate_budget"] for row in rows}, {"0"})
-        self.assertIn(
-            {
-                "source_species": "Cicuta maculata",
-                "target_species": "Daucus carota",
-                "source_role": "dangerous",
-                "target_role": "foraging_twin",
-                "gate_budget": "0",
-            },
-            rows,
-        )
+        expected_edges = {
+            (
+                edge["source_species"],
+                edge["target_species"],
+                edge["source_role"],
+                edge["target_role"],
+                "0",
+            )
+            for edge in LOOKALIKE_EDGE_SEEDS
+            if edge["source_role"] == "dangerous"
+            and edge["target_role"] == "foraging_twin"
+            and edge["source_species"] in output_classes
+            and edge["target_species"] in output_classes
+        }
+        actual_edges = {
+            (
+                row["source_species"],
+                row["target_species"],
+                row["source_role"],
+                row["target_role"],
+                row["gate_budget"],
+            )
+            for row in rows
+        }
+        self.assertEqual(actual_edges, expected_edges)
 
 
 if __name__ == "__main__":

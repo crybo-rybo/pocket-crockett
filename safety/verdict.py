@@ -1,4 +1,9 @@
-"""Pure safety verdict policy for calibrated vision candidates."""
+"""Pure safety verdict policy for calibrated vision candidates.
+
+The Jetson runtime should import and call ``decide()`` from this package rather
+than reimplementing consumption guidance. Keeping the policy here lets training
+reports, tests, and future runtime adapters share the same fail-safe contract.
+"""
 
 from __future__ import annotations
 

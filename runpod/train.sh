@@ -36,6 +36,7 @@ Environment variables:
   CONFIG      Override config YAML path for train/smoke stages
   RUN_NAME    Subdirectory under OUTPUT_DIR (default: STAGE timestamp)
   OOD_NEGATIVES_CSV Optional CSV of extra OOD validation negatives
+  FAIL_ON_RELEASE_GATE If 1, eval exits non-zero when danger/OOD release gates fail (default: 1)
   VENV_DIR    Training venv path (default: /workspace/venvs/pocket-crockett-training)
   USE_VENV    If 1, use runpod/setup_venv.sh and venv Python (default: 1)
   REFRESH_VENV If 1, rerun setup even when the venv already exists
@@ -60,6 +61,7 @@ PYTHON="${PYTHON:-python3}"
 USE_VENV="${USE_VENV:-1}"
 REFRESH_VENV="${REFRESH_VENV:-0}"
 VENV_DIR="${VENV_DIR:-/workspace/venvs/pocket-crockett-training}"
+FAIL_ON_RELEASE_GATE="${FAIL_ON_RELEASE_GATE:-1}"
 TIMESTAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 RUN_NAME="${RUN_NAME:-${STAGE}-${TIMESTAMP}}"
 RUN_DIR="${OUTPUT_DIR}/${RUN_NAME}"
@@ -158,11 +160,16 @@ case "$STAGE" in
     "$PYTHON" "${TRAINING_DIR}/ood.py" "${ood_args[@]}"
     ;;
   eval)
-    "$PYTHON" "${TRAINING_DIR}/evaluate.py" \
-      --run-dir "$RUN_DIR" \
-      --data-root "$DATA_ROOT" \
-      --splits-dir "$SPLITS_DIR" \
+    eval_args=(
+      --run-dir "$RUN_DIR"
+      --data-root "$DATA_ROOT"
+      --splits-dir "$SPLITS_DIR"
       --splits val test
+    )
+    if [[ "$FAIL_ON_RELEASE_GATE" == "1" ]]; then
+      eval_args+=(--fail-on-release-gate)
+    fi
+    "$PYTHON" "${TRAINING_DIR}/evaluate.py" "${eval_args[@]}"
     ;;
   upload)
     "$PYTHON" "${ROOT}/tools/upload_checkpoints_to_r2.py" \

@@ -72,6 +72,11 @@ class OODTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_runpod_eval_enforces_release_gate_by_default(self) -> None:
+        script = (ROOT / "runpod" / "train.sh").read_text(encoding="utf-8")
+        self.assertIn('FAIL_ON_RELEASE_GATE="${FAIL_ON_RELEASE_GATE:-1}"', script)
+        self.assertIn("--fail-on-release-gate", script)
+
     def test_uploader_allowlist_includes_ood_artifacts(self) -> None:
         path = ROOT / "tools" / "upload_checkpoints_to_r2.py"
         spec = importlib.util.spec_from_file_location("upload_checkpoints_to_r2", path)
