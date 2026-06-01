@@ -15,7 +15,7 @@ training/
 runpod/
   bootstrap.sh          Pull shards from R2, verify, unpack
   setup_venv.sh         Create CUDA-safe training venv
-  train.sh              Stage wrapper (smoke/train/calibrate/eval/upload)
+  train.sh              Stage wrapper (smoke/train/calibrate/ood/eval/upload)
 ```
 
 ## RunPod first campaign
@@ -44,6 +44,7 @@ SHARDS="train-000.tar val-000.tar test-000.tar calibration-000.tar" ./runpod/boo
 ```bash
 ./runpod/train.sh smoke
 RUN_NAME=<dir-from-smoke> ./runpod/train.sh calibrate
+RUN_NAME=<dir-from-smoke> ./runpod/train.sh ood
 RUN_NAME=<dir-from-smoke> ./runpod/train.sh eval
 RUN_NAME=<dir-from-smoke> ./runpod/train.sh upload
 ```
@@ -54,9 +55,14 @@ For the full baseline:
 ./runpod/bootstrap.sh
 RUN_NAME=baseline-v1 ./runpod/train.sh train
 RUN_NAME=baseline-v1 ./runpod/train.sh calibrate
+RUN_NAME=baseline-v1 ./runpod/train.sh ood
 RUN_NAME=baseline-v1 ./runpod/train.sh eval
 RUN_NAME=baseline-v1 ./runpod/train.sh upload
 ```
+
+The `eval` stage passes `--fail-on-release-gate` by default, so danger or OOD
+release-gate failures exit non-zero. Use `FAIL_ON_RELEASE_GATE=0` only for an
+exploratory report-only run.
 
 ## Local dev (Mac)
 
@@ -99,6 +105,7 @@ Each run directory contains:
 
 - `checkpoint-best.pt`, `checkpoint-last.pt`
 - `calibration.json` (temperature + recommended confidence floor)
+- `ood.json`, `ood_stats.pt`
 - `eval_report.json`, `eval_report.md`
 - `label_map.json`
 

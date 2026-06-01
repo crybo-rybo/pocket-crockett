@@ -967,22 +967,186 @@ def cmd_build_backbone(args: argparse.Namespace) -> None:
     print(f"Backbone records: {len(rows)}; non-USDA target taxa: {len(non_usda)}; unmatched taxa: {len(unmatched)}")
 
 
-LOOKALIKE_SEEDS = {
-    "Daucus carota": ["Cicuta maculata", "Cicuta douglasii", "Conium maculatum"],
-    "Cicuta maculata": ["Daucus carota"],
-    "Cicuta douglasii": ["Daucus carota"],
-    "Conium maculatum": ["Daucus carota"],
-    "Toxicoscordion venenosum": ["Allium canadense", "Allium tricoccum"],
-    "Toxicoscordion paniculatum": ["Allium canadense", "Allium tricoccum"],
-    "Zigadenus venenosus": ["Allium canadense", "Allium tricoccum"],
-    "Zigadenus paniculatus": ["Allium canadense", "Allium tricoccum"],
-    "Zigadenus glaberrimus": ["Allium canadense", "Allium tricoccum"],
-    "Allium canadense": ["Zigadenus venenosus", "Zigadenus paniculatus", "Zigadenus glaberrimus"],
-    "Allium tricoccum": ["Zigadenus venenosus", "Zigadenus paniculatus", "Zigadenus glaberrimus"],
-    "Amanita bisporigera": ["Amanita phalloides", "Amanita ocreata"],
-    "Amanita phalloides": ["Amanita bisporigera", "Amanita ocreata"],
-    "Amanita ocreata": ["Amanita bisporigera", "Amanita phalloides"],
-}
+LOOKALIKE_EDGE_SEEDS = [
+    {
+        "source_species": "Daucus carota",
+        "target_species": "Cicuta maculata",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Daucus carota",
+        "target_species": "Cicuta douglasii",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Daucus carota",
+        "target_species": "Conium maculatum",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Cicuta maculata",
+        "target_species": "Daucus carota",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Cicuta douglasii",
+        "target_species": "Daucus carota",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Conium maculatum",
+        "target_species": "Daucus carota",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Toxicoscordion venenosum",
+        "target_species": "Allium canadense",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Toxicoscordion venenosum",
+        "target_species": "Allium tricoccum",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Toxicoscordion paniculatum",
+        "target_species": "Allium canadense",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Toxicoscordion paniculatum",
+        "target_species": "Allium tricoccum",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus venenosus",
+        "target_species": "Allium canadense",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus venenosus",
+        "target_species": "Allium tricoccum",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus paniculatus",
+        "target_species": "Allium canadense",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus paniculatus",
+        "target_species": "Allium tricoccum",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus glaberrimus",
+        "target_species": "Allium canadense",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Zigadenus glaberrimus",
+        "target_species": "Allium tricoccum",
+        "source_role": "dangerous",
+        "target_role": "foraging_twin",
+    },
+    {
+        "source_species": "Allium canadense",
+        "target_species": "Zigadenus venenosus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Allium canadense",
+        "target_species": "Zigadenus paniculatus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Allium canadense",
+        "target_species": "Zigadenus glaberrimus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Allium tricoccum",
+        "target_species": "Zigadenus venenosus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Allium tricoccum",
+        "target_species": "Zigadenus paniculatus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Allium tricoccum",
+        "target_species": "Zigadenus glaberrimus",
+        "source_role": "foraging_twin",
+        "target_role": "dangerous",
+    },
+    {
+        "source_species": "Amanita bisporigera",
+        "target_species": "Amanita phalloides",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+    {
+        "source_species": "Amanita bisporigera",
+        "target_species": "Amanita ocreata",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+    {
+        "source_species": "Amanita phalloides",
+        "target_species": "Amanita bisporigera",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+    {
+        "source_species": "Amanita phalloides",
+        "target_species": "Amanita ocreata",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+    {
+        "source_species": "Amanita ocreata",
+        "target_species": "Amanita bisporigera",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+    {
+        "source_species": "Amanita ocreata",
+        "target_species": "Amanita phalloides",
+        "source_role": "fungus_refusal",
+        "target_role": "fungus_refusal",
+    },
+]
+
+
+def _lookalike_seed_map() -> dict[str, list[str]]:
+    seeds: dict[str, list[str]] = defaultdict(list)
+    for edge in LOOKALIKE_EDGE_SEEDS:
+        seeds[edge["source_species"]].append(edge["target_species"])
+    return dict(seeds)
+
+
+LOOKALIKE_SEEDS = _lookalike_seed_map()
 
 
 def cmd_build_edibility_skeleton(_: argparse.Namespace) -> None:

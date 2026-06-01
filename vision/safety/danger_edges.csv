@@ -1,0 +1,10 @@
+source_species,target_species,source_role,target_role,gate_budget
+Cicuta maculata,Daucus carota,dangerous,foraging_twin,0
+Cicuta douglasii,Daucus carota,dangerous,foraging_twin,0
+Conium maculatum,Daucus carota,dangerous,foraging_twin,0
+Zigadenus venenosus,Allium canadense,dangerous,foraging_twin,0
+Zigadenus paniculatus,Allium canadense,dangerous,foraging_twin,0
+Zigadenus glaberrimus,Allium canadense,dangerous,foraging_twin,0
+Zigadenus venenosus,Allium tricoccum,dangerous,foraging_twin,0
+Zigadenus paniculatus,Allium tricoccum,dangerous,foraging_twin,0
+Zigadenus glaberrimus,Allium tricoccum,dangerous,foraging_twin,0
