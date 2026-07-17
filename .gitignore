@@ -21,6 +21,10 @@ vision/upload_manifest*.sha256
 # Project-local virtualenv. See README "Local setup" for the activate flow.
 .venv/
 
+# RAG MVP generated index (rebuild with rag-pkg/build-database.py).
+rag-pkg/index/
+
+
 # Agent files
 AGENTS.md
 CLAUDE.md
